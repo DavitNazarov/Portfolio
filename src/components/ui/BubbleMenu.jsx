@@ -140,7 +140,6 @@ export default function BubbleMenu({
 
   return (
     <>
-      {/* Tailwind hacks */}
       <style>{`
         .bubble-menu .menu-line {
           transition: transform 0.3s ease, opacity 0.3s ease;
@@ -155,9 +154,6 @@ export default function BubbleMenu({
             background: var(--hover-bg) !important;
             color: var(--hover-color) !important;
           }
-          .bubble-menu-items .pill-link:active {
-            transform: rotate(var(--item-rot)) scale(.94);
-          }
         }
         @media (max-width: 899px) {
           .bubble-menu-items {
@@ -166,19 +162,6 @@ export default function BubbleMenu({
           }
           .bubble-menu-items .pill-list {
             row-gap: 16px;
-          }
-          .bubble-menu-items .pill-link {
-            font-size: clamp(1.2rem, 3vw, 4rem);
-            padding: clamp(1rem, 2vw, 2rem) 0;
-            min-height: 80px !important;
-          }
-          .bubble-menu-items .pill-link:hover {
-            transform: scale(1.06);
-            background: var(--hover-bg);
-            color: var(--hover-color);
-          }
-          .bubble-menu-items .pill-link:active {
-            transform: scale(.94);
           }
         }
       `}</style>
@@ -194,13 +177,12 @@ export default function BubbleMenu({
             "bubble logo-bubble",
             "inline-flex items-center justify-center",
             "rounded-full",
-            "bg-white",
-            "shadow-[0_4px_16px_rgba(0,0,0,0.12)]",
             "pointer-events-auto",
             "h-12 md:h-14",
             "px-4 md:px-8",
             "gap-2",
             "will-change-transform",
+            "shadow-[0_4px_16px_rgba(0,0,0,0.12)]",
           ].join(" ")}
           aria-label="Logo"
           style={{
@@ -209,7 +191,13 @@ export default function BubbleMenu({
             borderRadius: "9999px",
           }}
         >
-          <span className="logo-content inline-flex items-center justify-center w-[120px] h-full">
+          <span
+            className="logo-content inline-flex items-center justify-center w-[120px] h-full text-[1.5rem] font-extrabold tracking-wide"
+            style={{
+              fontFamily: "'Poppins', sans-serif",
+              color: "#1e1e1e", // logo text color
+            }}
+          >
             {typeof logo === "string" ? (
               <img
                 src={logo}
@@ -217,7 +205,7 @@ export default function BubbleMenu({
                 className="bubble-logo max-h-[60%] max-w-full object-contain block"
               />
             ) : (
-              logo
+              logo || "David."
             )}
           </span>
         </div>
@@ -226,11 +214,19 @@ export default function BubbleMenu({
         <div className="flex items-center gap-2 pointer-events-auto">
           {/* Current Section Label */}
           <div className="relative flex items-center">
-            <span className="relative bg-white rounded-l-full rounded-r-md shadow px-3 py-1 text-sm font-semibold">
+            <span
+              className="relative rounded-l-full rounded-r-md shadow px-3 py-1 text-sm md:text-base font-bold uppercase tracking-wider"
+              style={{
+                background: "#1e1e1e",
+                color: "#ffffff",
+                fontFamily: "'Poppins', sans-serif",
+              }}
+            >
               {currentSection}
               <span
                 className="absolute top-1/2 right-[-7px] -translate-y-1/2 
-                           w-0 h-0 border-y-6 border-y-transparent border-l-8 border-l-white"
+                           w-0 h-0 border-y-6 border-y-transparent border-l-8"
+                style={{ borderLeftColor: "#1e1e1e" }}
               />
             </span>
           </div>
@@ -289,10 +285,8 @@ export default function BubbleMenu({
           className={[
             "bubble-menu-items",
             useFixedPosition ? "fixed" : "absolute",
-            "inset-0",
-            "flex items-center justify-center",
-            "pointer-events-none",
-            "z-[1000]",
+            "inset-0 flex items-center justify-center",
+            "pointer-events-none z-[1000]",
           ].join(" ")}
           aria-hidden={!isMenuOpen}
         >
@@ -314,9 +308,7 @@ export default function BubbleMenu({
                   onClick={(e) => {
                     e.preventDefault();
                     const target = document.querySelector(item.href);
-                    if (target) {
-                      target.scrollIntoView({ behavior: "smooth" });
-                    }
+                    if (target) target.scrollIntoView({ behavior: "smooth" });
                     setIsMenuOpen(false);
                   }}
                   className="pill-link w-full rounded-[999px] no-underline bg-white text-inherit shadow-[0_4px_14px_rgba(0,0,0,0.10)] flex items-center justify-center relative transition-[background,color] duration-300 ease-in-out box-border whitespace-nowrap overflow-hidden"

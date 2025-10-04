@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
 import { navBarItems as items } from "@/constants/navBarItems";
 import BubbleMenu from "../ui/BubbleMenu";
+import DecryptedText from "../ui/DecryptedText";
 
 const NavBar = () => {
   return (
     <div className="relative">
       <BubbleMenu
-        logo={<span style={{ fontWeight: 700 }}>RB</span>}
+        logo={
+          <DecryptedText
+            text="Davit"
+            speed={100}
+            maxIterations={20}
+            characters="ABCD1234!?"
+            className="revealed"
+            parentClassName="all-letters"
+            encryptedClassName="encrypted"
+            animateOn="view"
+          />
+        }
         items={items}
         menuAriaLabel="Toggle navigation"
         menuBg="#ffffff"
