@@ -11,7 +11,7 @@ const NavBar = () => {
           <DecryptedText
             text="Davit"
             speed={100}
-            maxIterations={20}
+            maxIterations={50}
             characters="ABCD1234!?"
             className="revealed"
             parentClassName="all-letters"

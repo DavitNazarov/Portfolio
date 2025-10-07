@@ -4,6 +4,7 @@ import Skills from "@/page/Skills";
 import Projects from "@/page/Projects";
 import Home from "@/page/Home";
 import Particles from "@/components/ui/Particles";
+import SkillsList from "@/page/SkillsList";
 
 const MainLayout = () => {
   const bgRef = useRef(null);
@@ -51,11 +52,11 @@ const MainLayout = () => {
         </div>
       </section>
 
-      <section
-        id="skills"
-        className="h-screen flex items-center justify-center bg-green-100"
-      >
+      <section id="skills" className="h-[150vh] bg-background">
         <Skills />
+      </section>
+      <section className="h-[150vh] flex items-center justify-center bg-background">
+        <SkillsList />
       </section>
 
       <section

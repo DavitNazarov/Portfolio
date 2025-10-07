@@ -217,8 +217,8 @@ export default function BubbleMenu({
             <span
               className="relative rounded-l-full rounded-r-md shadow px-3 py-1 text-sm md:text-base font-bold uppercase tracking-wider"
               style={{
-                background: "#1e1e1e",
-                color: "#ffffff",
+                background: "#ffffff",
+                color: " #1e1e1e",
                 fontFamily: "'Poppins', sans-serif",
               }}
             >
@@ -226,7 +226,7 @@ export default function BubbleMenu({
               <span
                 className="absolute top-1/2 right-[-7px] -translate-y-1/2 
                            w-0 h-0 border-y-6 border-y-transparent border-l-8"
-                style={{ borderLeftColor: "#1e1e1e" }}
+                style={{ borderLeftColor: "#ffffff" }}
               />
             </span>
           </div>
