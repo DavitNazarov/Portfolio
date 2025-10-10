@@ -1,68 +1,10 @@
 import React from "react";
 import ScrollVelocity from "@/components/ui/ScrollVelocity";
 import ScrollFloat from "@/components/ui/ScrollFloat";
-import {
-  Code,
-  Braces,
-  Database,
-  Server,
-  Github,
-  Globe,
-  Terminal,
-  Layers,
-  Cloud,
-  FileCode,
-  Paintbrush,
-  Sparkles,
-} from "lucide-react";
+
 import FadeContent from "@/components/ui/FadeContent";
-
-// Row 1 – Basic Web Skills
-const basicSkills = [
-  { icon: <FileCode size={80} />, name: "HTML" },
-  { icon: <Paintbrush size={80} />, name: "CSS" },
-  { icon: <Globe size={80} />, name: "Tailwind" },
-  { icon: <Sparkles size={80} />, name: "SCSS" },
-];
-
-// Row 2 – Frontend Frameworks / Libraries
-const frontendSkills = [
-  { icon: <Braces size={80} />, name: "JavaScript" },
-  { icon: <Code size={80} />, name: "React" },
-  { icon: <Layers size={80} />, name: "Framer Motion" },
-  { icon: <Github size={80} />, name: "GitHub" },
-];
-
-// Row 3 – Backend / Tools
-const backendSkills = [
-  { icon: <Server size={80} />, name: "Node.js" },
-  { icon: <Terminal size={80} />, name: "Express" },
-  { icon: <Database size={80} />, name: "MongoDB" },
-
-  { icon: <Cloud size={80} />, name: "API Integration" },
-];
-
-const LogoRow = ({ logos }) => (
-  <div className="flex gap-20 md:gap-28 px-8 md:px-24 -translate-x-6 md:-translate-x-12">
-    <div className="w-[60px] md:w-[120px]" />
-    {logos.map((logo, index) => (
-      <div
-        key={index}
-        className="flex flex-col items-center justify-center w-[100px] md:w-[160px] opacity-90 hover:opacity-100 transition-opacity"
-      >
-        <div className="text-white mb-2 md:mb-3">
-          {React.cloneElement(logo.icon, {
-            size: window.innerWidth < 768 ? 50 : 80,
-          })}
-        </div>
-        <p className="text-white text-lg md:text-2xl font-[Russo_One] text-center whitespace-nowrap">
-          {logo.name}
-        </p>
-      </div>
-    ))}
-    <div className="w-[60px] md:w-[120px]" />
-  </div>
-);
+import LogoRow from "@/components/ui/LogoRow";
+import { backendSkills, basicSkills, frontendSkills } from "@/const/SkillsData";
 
 const SkillsList = () => {
   return (
@@ -91,7 +33,7 @@ const SkillsList = () => {
           {/* Row 1 – Basic */}
           <ScrollVelocity
             texts={[<LogoRow key="basic" logos={basicSkills} />]}
-            velocity={15}
+            velocity={5}
             numCopies={4}
             damping={60}
             stiffness={400}
@@ -101,7 +43,7 @@ const SkillsList = () => {
           {/* Row 2 – Frontend */}
           <ScrollVelocity
             texts={[<LogoRow key="frontend" logos={frontendSkills} />]}
-            velocity={-20}
+            velocity={-5}
             numCopies={4}
             damping={60}
             stiffness={400}
@@ -111,7 +53,7 @@ const SkillsList = () => {
           {/* Row 3 – Backend */}
           <ScrollVelocity
             texts={[<LogoRow key="backend" logos={backendSkills} />]}
-            velocity={10}
+            velocity={5}
             numCopies={4}
             damping={60}
             stiffness={400}

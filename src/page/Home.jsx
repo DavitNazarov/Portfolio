@@ -24,7 +24,7 @@ const Home = () => {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center max-w-6xl w-full">
         <div className="space-y-6">
-          <h1 className="text-4xl md:text-6xl font-extrabold">
+          <h1 className="text-4xl md:text-6xl font-normal">
             <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
               <TextType
                 text={[
@@ -37,12 +37,12 @@ const Home = () => {
                 deletingSpeed={50}
                 pauseDuration={1500}
                 loop
-                cursorClassName="text-white"
+                cursorClassName="text-white "
               />
             </span>
           </h1>
 
-          <p className="text-muted-foreground text-base md:text-lg max-w-md leading-relaxed">
+          <p className="text-muted-foreground font-mono  text-base md:text-lg max-w-md leading-relaxed">
             I'm a MERN stack developer passionate about crafting smooth,
             high-performance web apps and exploring the world of Artificial
             Intelligence.
