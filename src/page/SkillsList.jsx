@@ -4,7 +4,11 @@ import ScrollFloat from "@/components/ui/ScrollFloat";
 
 import FadeContent from "@/components/ui/FadeContent";
 import LogoRow from "@/components/ui/LogoRow";
-import { backendSkills, basicSkills, frontendSkills } from "@/const/SkillsData";
+import {
+  backendSkills,
+  basicSkills,
+  frontendSkills,
+} from "@/constants/SkillsData";
 
 const SkillsList = () => {
   return (
@@ -33,7 +37,7 @@ const SkillsList = () => {
           {/* Row 1 – Basic */}
           <ScrollVelocity
             texts={[<LogoRow key="basic" logos={basicSkills} />]}
-            velocity={5}
+            velocity={10}
             numCopies={4}
             damping={60}
             stiffness={400}
@@ -43,7 +47,7 @@ const SkillsList = () => {
           {/* Row 2 – Frontend */}
           <ScrollVelocity
             texts={[<LogoRow key="frontend" logos={frontendSkills} />]}
-            velocity={-5}
+            velocity={-10}
             numCopies={4}
             damping={60}
             stiffness={400}
@@ -53,7 +57,7 @@ const SkillsList = () => {
           {/* Row 3 – Backend */}
           <ScrollVelocity
             texts={[<LogoRow key="backend" logos={backendSkills} />]}
-            velocity={5}
+            velocity={10}
             numCopies={4}
             damping={60}
             stiffness={400}

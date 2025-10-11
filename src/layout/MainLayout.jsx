@@ -2,7 +2,10 @@ import { useEffect, useRef, Suspense } from "react";
 import Particles from "@/components/ui/Particles";
 import { Home, NavBar, Projects, Skills, SkillsList } from "@/lazy/pages";
 import { Loader } from "lucide-react";
-
+import ProjectsList from "@/page/ProjectsList";
+import Contact from "@/page/Contact";
+import Experience from "@/page/Experience";
+import ExperienceList from "@/page/ExperienceList";
 const MainLayout = () => {
   const bgRef = useRef(null);
 
@@ -58,11 +61,24 @@ const MainLayout = () => {
           <SkillsList />
         </section>
 
-        <section
-          id="projects"
-          className="h-screen flex items-center justify-center bg-yellow-100"
-        >
+        <section id="projects" className="h-[150vh] bg-background">
           <Projects />
+        </section>
+
+        <section className="h-[150vh] flex items-center justify-center bg-background">
+          <ProjectsList />
+        </section>
+
+        <section id="experience" className="h-[150vh] bg-background">
+          <Experience />
+        </section>
+
+        <section className="h-[150vh] flex items-center justify-center bg-background">
+          <ExperienceList />
+        </section>
+
+        <section id="contact" className="h-[100vh] bg-background">
+          <Contact />
         </section>
       </Suspense>
     </>

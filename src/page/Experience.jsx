@@ -1,11 +1,11 @@
 import React from "react";
 import SplitText from "@/components/ui/SplitText";
 
-const Skills = () => {
+const Experience = () => {
   return (
     <div className="flex h-full items-center justify-start pl-[10%]">
       <SplitText
-        text="My Skills?"
+        text="Experience?"
         className="
     font-extrabold text-white leading-none font-[Russo_One]
     text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem]
@@ -24,4 +24,4 @@ const Skills = () => {
   );
 };
 
-export default Skills;
+export default Experience;

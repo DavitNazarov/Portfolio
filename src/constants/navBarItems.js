@@ -27,13 +27,7 @@ export const navBarItems = [
     rotation: 10,
     hoverStyles: { bgColor: "#8b5cf6", textColor: "#ffffff" },
   },
-  {
-    label: "AWARDS",
-    href: "#awards",
-    ariaLabel: "Awards",
-    rotation: -10,
-    hoverStyles: { bgColor: "#ef4444", textColor: "#ffffff" },
-  },
+
   {
     label: "CONTACT",
     href: "#contact",
