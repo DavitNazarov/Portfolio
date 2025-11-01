@@ -1,5 +1,6 @@
 import { useEffect, useRef, Suspense } from "react";
 import Particles from "@/components/ui/Particles";
+import ChatBotWidget from "@/components/ui/ChatBotWidget";
 import { Home, NavBar, Projects, Skills, SkillsList } from "@/lazy/pages";
 import { Loader } from "lucide-react";
 import ProjectsList from "@/page/ProjectsList";
@@ -81,6 +82,7 @@ const MainLayout = () => {
           <Contact />
         </section>
       </Suspense>
+      <ChatBotWidget />
     </>
   );
 };
