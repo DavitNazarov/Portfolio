@@ -3,6 +3,7 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20.15.1"
+  NODE_VERSION = "22.12.0"
   ROLLUP_NO_NATIVE = "1"
+  NPM_FLAGS = "--omit=optional"
 
