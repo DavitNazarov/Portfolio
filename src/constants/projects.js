@@ -7,6 +7,13 @@ export const projects = [
     live: "https://moviedb-ch39.onrender.com/",
   },
   {
+    name: "Weather App",
+    description:
+      "React + Vite weather dashboard that pulls live OpenWeatherMap data, shows sunrise/sunset times, and supports location search with intelligent geocoding.",
+    github: "https://github.com/DavitNazarov/WeatherApp",
+    live: "https://weatherdn.netlify.app/",
+  },
+  {
     name: "Portfolio Website",
     description:
       "Personal portfolio built with React, Framer Motion, and TailwindCSS animations.",
