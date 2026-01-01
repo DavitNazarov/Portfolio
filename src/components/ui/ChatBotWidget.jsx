@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, Sparkles, X } from "lucide-react";
+import { MessageCircle, Sparkles, X, RotateCcw } from "lucide-react";
 
 const assistantName = "Atlas";
 
 const suggestions = [
   "Who is David?",
-  "Where is David working right now?",
-  "What are David's core skills?",
-  "What languages does David speak?",
+  "What projects has David built?",
+  "What is David's tech stack?",
+  "Where is David working?",
+  "Where is David studying?",
+  "What are David's skills?",
 ];
 
 const knowledgeBase = [
@@ -21,7 +23,7 @@ const knowledgeBase = [
       "who are you",
     ],
     response:
-      "David Nazarov is a MERN-focused developer from Georgia who delivers high-performance React applications.",
+      "David Nazarov is a MERN stack developer from Georgia who also knows Python. He delivers high-performance React applications and is currently pursuing an IT bachelor's degree at SEU.",
   },
   {
     keywords: [
@@ -62,7 +64,7 @@ const knowledgeBase = [
       "working right now",
     ],
     response:
-      "Since September 2025 David has been a Front-End Developer at Softgen, a software company where he builds polished product experiences in close collaboration with cross-functional teams.",
+      "Since September 2025 David has been a React Developer at Softgen, a software company where he builds polished product experiences in close collaboration with cross-functional teams.",
   },
   {
     keywords: [
@@ -77,7 +79,7 @@ const knowledgeBase = [
       "duty",
     ],
     response:
-      "At Softgen David owns the front-end logic for admin dashboards—translating product requirements into React flows, wiring them to backend APIs, and keeping delivery on schedule alongside design and backend teammates.",
+      "At Softgen David owns the front-end logic for admin dashboards—turning product specs into React flows, integrating with backend APIs, and shipping features on deadline alongside design and backend teams. He uses React, Tailwind, Framer Motion, and GitLab.",
   },
   {
     keywords: ["what do you do", "role", "focus", "specialize", "strength"],
@@ -85,9 +87,9 @@ const knowledgeBase = [
       "David focuses on full-stack JavaScript with a front-end emphasis: rapid prototyping, motion-rich UX, and building secure, production-ready experiences end-to-end.",
   },
   {
-    keywords: ["skills", "tech stack", "technologies", "stack", "tools"],
+    keywords: ["skills", "tech stack", "technologies", "stack", "tools", "mern", "python"],
     response:
-      "His toolkit includes React, Node.js, Express, MongoDB, Tailwind, Framer Motion, GSAP, and GitHub-driven workflows. He's comfortable building both the experience and the APIs behind it.",
+      "David specializes in the MERN stack (MongoDB, Express, React, Node.js) and also knows Python. His toolkit includes HTML, CSS, Tailwind, SCSS, JavaScript, React, Framer Motion, GitHub, Node.js, Express, MongoDB, Python, and API Integration. He's comfortable building both the experience and the APIs behind it.",
   },
   {
     keywords: [
@@ -99,17 +101,17 @@ const knowledgeBase = [
       "learning",
     ],
     response:
-      "He's evolving Softgen's admin dashboards, experimenting with AI-assisted UX patterns, and polishing side projects like his Movie App while planning the next additions to his portfolio.",
+      "He's currently working at Softgen, evolving admin dashboards and shipping features on deadline. He's also continuously improving his portfolio and working on side projects to expand his skills in the MERN stack and Python.",
   },
   {
     keywords: ["experience", "career", "background", "timeline"],
     response:
-      "He joined Softgen in September 2025 as a Front-End Developer building dashboard experiences. Earlier, in 2024 at Hey guide, he delivered travel offer flows, authentication, and polished UI components in partnership with backend teams.",
+      "He joined Softgen in September 2025 as a React Developer building dashboard experiences. Earlier, from January to December 2024, he worked as a Front-End Developer at Startup Company (Hey guide), where he collaborated with backend developers to integrate APIs and built travel offer sections and authentication functionality using React, Tailwind, Framer, and GitHub.",
   },
   {
-    keywords: ["contact", "connect", "reach", "linkedin", "github"],
+    keywords: ["contact", "connect", "reach", "linkedin", "github", "email", "mail"],
     response:
-      "Feel free to connect with David on LinkedIn (https://www.linkedin.com/in/davit-nazarov-366b77389) or explore his GitHub (https://github.com/DavitNazarov).",
+      "You can reach David via email at nazarov.davit17@gmail.com, connect on LinkedIn (https://www.linkedin.com/in/davit-nazarov-366b77389), explore his GitHub (https://github.com/DavitNazarov), or follow him on Instagram (@nazarovdati_).",
   },
   {
     keywords: ["location", "based", "from", "country", "where is he from"],
@@ -132,7 +134,7 @@ const knowledgeBase = [
       "seu",
     ],
     response:
-      "David finished school in 2025, enrolled the same year in SEU's IT bachelor's program in Georgia, and completed React and Front-End Development courses at Digital Academy to deepen his practical skills.",
+      "David finished school in 2025 and enrolled the same year in SEU (University of SEU) in Georgia, where he's currently pursuing an IT bachelor's degree. He also completed React and Front-End Development courses at Digital Academy to deepen his practical skills.",
   },
   {
     keywords: [
@@ -147,9 +149,44 @@ const knowledgeBase = [
       "David speaks Georgian (native), English, and Russian fluently—making it easy to collaborate across international teams.",
   },
   {
-    keywords: ["project", "projects", "movie app", "portfolio"],
+    keywords: ["project", "projects", "movie app", "moviedb", "movie db", "moviehub", "movie hub"],
     response:
-      "His current highlight is a Movie App that showcases his React skills, and he's preparing to ship more portfolio-ready projects soon.",
+      "David has built several projects including MovieHub (2025) - a production-ready MERN stack application for exploring films with TMDB API integration, featuring authentication, user profiles, favorites & ratings, AI-powered movie chat (Jarvis), comments system, admin dashboard, real-time notifications, ad banner system, and comprehensive SEO optimization (https://www.moviehubs.cc/), Weather App (2025) - React + Vite weather dashboard with OpenWeatherMap integration (https://weatherdn.netlify.app/), Portfolio Website (2025) - built with React, Framer Motion, and TailwindCSS, Auth system (2025) - simple authentication system with MERN stack, Aim game (2024) - fun aim training game built with vanilla JavaScript, HTML, and CSS, and React Tic Tac Toe (2024) - tic-tac-toe game built with React.",
+  },
+  {
+    keywords: ["moviehub", "movie hub", "moviedb", "movie app"],
+    response:
+      "MovieHub is David's production-ready MERN stack application built in 2025. It's a comprehensive movie exploration platform featuring authentication, user profiles, favorites & ratings, AI-powered movie chat (Jarvis using OpenRouter and TMDB), comments system, admin dashboard with user management, real-time notifications, ad banner system, and comprehensive SEO optimization. Built with React 19, Vite 7, Tailwind CSS, Node.js, Express, MongoDB, and integrated with TMDB API. Check it out at https://www.moviehubs.cc/",
+  },
+  {
+    keywords: ["weather app", "weather"],
+    response:
+      "David built a Weather App in 2025 using React and Vite. It's a weather dashboard that pulls live OpenWeatherMap data, shows sunrise/sunset times, and supports location search with intelligent geocoding. You can check it out at https://weatherdn.netlify.app/",
+  },
+  {
+    keywords: ["portfolio", "portfolio website", "this website"],
+    response:
+      "This portfolio website was built by David in 2025 using React, Framer Motion, and TailwindCSS. It features smooth animations, dark/light mode, and a minimalist design. The source code is available on GitHub at https://github.com/DavitNazarov/Portfolio",
+  },
+  {
+    keywords: ["auth", "authentication", "auth system"],
+    response:
+      "David built an authentication system in 2025 using the MERN stack (MongoDB, Express, React, Node.js). It's a simple authentication system with MERN stack, though he didn't make the frontend part for it. The code is available on GitHub at https://github.com/DavitNazarov/Auth",
+  },
+  {
+    keywords: ["github", "repositories", "code", "source code"],
+    response:
+      "You can explore all of David's projects on GitHub at https://github.com/DavitNazarov. His repositories include MovieHub (Movies), Weather App (WeatherApp), Portfolio, Auth system (Auth), Aim game, and React Tic Tac Toe.",
+  },
+  {
+    keywords: ["softgen", "current company", "where does he work"],
+    response:
+      "David works at Softgen as a React Developer since September 2025. He owns the front-end logic for admin dashboards, turning product specs into React flows, integrating with backend APIs, and shipping features on deadline alongside design and backend teams. He uses React, Tailwind, Framer Motion, and GitLab.",
+  },
+  {
+    keywords: ["hey guide", "previous", "past work", "2024", "startup company"],
+    response:
+      "From January to December 2024, David worked as a Front-End Developer at Startup Company (Hey guide). He collaborated with backend developers to integrate APIs and built travel offer sections and authentication functionality for the web app using React, Tailwind, Framer, and GitHub.",
   },
 ];
 
@@ -229,27 +266,47 @@ const ChatBotWidget = () => {
   }, [messages, isThinking]);
 
   const getBotResponse = (rawMessage) => {
-    const normalized = rawMessage.toLowerCase();
+    const normalized = rawMessage.toLowerCase().trim();
 
-    if (/(thank|appreciate|great)/.test(normalized)) {
+    // Handle gratitude
+    if (/(thank|thanks|appreciate|great|awesome|perfect|excellent)/.test(normalized)) {
       return politeClosings[Math.floor(Math.random() * politeClosings.length)];
     }
 
-    if (/(hi|hello|hey|good morning|good evening)/.test(normalized)) {
-      return "Hello! Ask me anything about David's journey, skills, or what he's building at the moment.";
+    // Handle greetings
+    if (/(hi|hello|hey|good morning|good evening|good afternoon|greetings)/.test(normalized)) {
+      return "Hello! Ask me anything about David's journey, skills, projects, or what he's building at the moment.";
     }
 
-    const match = knowledgeBase.find((entry) =>
-      entry.keywords.some((keyword) => normalized.includes(keyword))
-    );
-
-    if (match) {
-      return match.response;
+    // Handle goodbye
+    if (/(bye|goodbye|see you|farewell|later)/.test(normalized)) {
+      return "Goodbye! Feel free to come back anytime if you have more questions about David.";
     }
 
-    return fallbackResponses[
-      Math.floor(Math.random() * fallbackResponses.length)
-    ];
+    // Improved matching: find best match by counting keyword matches
+    let bestMatch = null;
+    let bestScore = 0;
+
+    knowledgeBase.forEach((entry) => {
+      const score = entry.keywords.reduce((acc, keyword) => {
+        if (normalized.includes(keyword)) {
+          return acc + 1;
+        }
+        return acc;
+      }, 0);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = entry;
+      }
+    });
+
+    if (bestMatch && bestScore > 0) {
+      return bestMatch.response;
+    }
+
+    // Fallback with helpful suggestions
+    return `${fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)]} Try asking about his projects, education, or work experience.`;
   };
 
   const sendMessage = (rawMessage) => {
@@ -278,6 +335,15 @@ const ChatBotWidget = () => {
     sendMessage(suggestion);
   };
 
+  const clearMessages = () => {
+    setMessages([
+      {
+        sender: "bot",
+        text: greetingMessage,
+      },
+    ]);
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-[1000]">
       <div className="relative flex flex-col items-end">
@@ -289,18 +355,18 @@ const ChatBotWidget = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.98 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="relative w-80 sm:w-96 rounded-[28px] border border-white/10 bg-slate-900/95 shadow-2xl backdrop-blur-lg px-5 py-4 text-sm text-foreground font-[100]"
+              className="relative w-80 sm:w-96 rounded-[28px] border border-border bg-card/95 backdrop-blur-xl shadow-2xl px-5 py-4 text-sm text-foreground"
             >
-              <div className="absolute -bottom-2 right-10 h-5 w-5 rotate-45 border-b border-r border-white/10 bg-slate-900/95" />
+              <div className="absolute -bottom-2 right-10 h-5 w-5 rotate-45 border-b border-r border-border bg-card/95" />
 
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-[0.3em] text-secondary">
-                    David’s AI Guide
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                    David's AI Guide
                   </p>
                   <div className="flex items-center gap-2 text-foreground">
-                    <Sparkles size={18} className="text-accent" />
-                    <span className="text-lg font-normal">
+                    <Sparkles size={18} className="text-primary" />
+                    <span className="text-lg font-light">
                       Ask {assistantName}
                     </span>
                   </div>
@@ -309,30 +375,49 @@ const ChatBotWidget = () => {
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
-                  aria-label="Close chatbot"
-                >
-                  <X size={16} />
-                </button>
+                <div className="flex items-center gap-2">
+                  {messages.length > 1 && (
+                    <motion.button
+                      type="button"
+                      onClick={clearMessages}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-muted/50 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                      aria-label="Clear conversation"
+                      title="Clear conversation"
+                    >
+                      <RotateCcw size={14} />
+                    </motion.button>
+                  )}
+                  <motion.button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-muted/50 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                    aria-label="Close chatbot"
+                  >
+                    <X size={16} />
+                  </motion.button>
+                </div>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {suggestions.map((suggestion) => (
-                  <button
+                  <motion.button
                     key={suggestion}
                     type="button"
                     onClick={() => handleSuggestion(suggestion)}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-[100] uppercase tracking-[0.12em] text-muted-foreground transition hover:border-secondary hover:bg-secondary/10 hover:text-secondary"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="rounded-full border border-border bg-muted/30 px-3 py-1.5 text-xs font-light uppercase tracking-[0.12em] text-muted-foreground transition-all duration-200 hover:border-primary hover:bg-primary/10 hover:text-primary"
                   >
                     {suggestion}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
 
-              <div className="mt-4 flex max-h-56 flex-col gap-3 overflow-y-auto pr-1">
+              <div className="mt-4 flex max-h-64 sm:max-h-80 flex-col gap-3 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                 {messages.map((message, index) => (
                   <motion.div
                     key={`${message.sender}-${index}-${message.text.slice(
@@ -349,17 +434,38 @@ const ChatBotWidget = () => {
                     }`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed backdrop-blur ${
+                      className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                         message.sender === "user"
-                          ? "bg-primary/80 text-primary-foreground"
-                          : "bg-white/5 text-foreground border border-white/10"
-                      } font-[100] ${
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted/50 text-foreground border border-border"
+                      } font-light ${
                         message.sender === "user"
                           ? "shadow-lg shadow-primary/20"
-                          : "shadow-lg shadow-secondary/10"
+                          : "shadow-lg"
                       }`}
                     >
-                      {message.text}
+                      {message.sender === "bot" ? (
+                        <span className="whitespace-pre-wrap break-words">
+                          {message.text.split(/(https?:\/\/[^\s]+)/g).map((part, i) => {
+                            if (part.match(/^https?:\/\//)) {
+                              return (
+                                <a
+                                  key={i}
+                                  href={part}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary underline hover:text-primary/80 transition-colors"
+                                >
+                                  {part}
+                                </a>
+                              );
+                            }
+                            return part;
+                          })}
+                        </span>
+                      ) : (
+                        message.text
+                      )}
                     </div>
                   </motion.div>
                 ))}
@@ -371,10 +477,10 @@ const ChatBotWidget = () => {
                     transition={{ duration: 0.18, ease: "easeOut" }}
                     className="flex justify-start"
                   >
-                    <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                    <div className="flex items-center gap-2 rounded-2xl border border-border bg-muted/50 px-4 py-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
                       <span className="relative flex h-1.5 w-1.5">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75" />
-                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-secondary" />
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
                       </span>
                       thinking
                     </div>
@@ -391,30 +497,46 @@ const ChatBotWidget = () => {
                 <input
                   value={inputValue}
                   onChange={(event) => setInputValue(event.target.value)}
-                  placeholder="Ask about David's work..."
-                  className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-foreground font-[100] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+                  placeholder="Ask about David..."
+                  className="flex-1 rounded-full border border-border bg-muted/30 px-4 py-2.5 text-sm text-foreground font-light placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary transition-all duration-200"
                   aria-label="Ask a question about David"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
                 />
-                <button
+                <motion.button
                   type="submit"
-                  className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-xs font-medium uppercase tracking-[0.18em] text-secondary-foreground transition hover:bg-secondary/90"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  disabled={!inputValue.trim()}
+                  className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground transition-all duration-200 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Ask
-                </button>
+                </motion.button>
               </form>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <button
+        <motion.button
           ref={buttonRef}
           type="button"
           onClick={() => setOpen((prev) => !prev)}
-          className="flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-primary text-primary-foreground shadow-xl transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex h-14 w-14 items-center justify-center rounded-full border border-border bg-primary text-primary-foreground shadow-xl transition-all duration-200 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           aria-label={open ? "Hide David's chatbot" : "Show David's chatbot"}
         >
-          <MessageCircle size={26} />
-        </button>
+          <motion.div
+            animate={{ rotate: open ? 90 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {open ? <X size={24} /> : <MessageCircle size={26} />}
+          </motion.div>
+        </motion.button>
       </div>
     </div>
   );

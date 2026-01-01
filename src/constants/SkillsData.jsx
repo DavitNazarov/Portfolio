@@ -33,6 +33,6 @@ export const backendSkills = [
   { icon: <Server size={80} />, name: "Node.js" },
   { icon: <Terminal size={80} />, name: "Express" },
   { icon: <Database size={80} />, name: "MongoDB" },
-
+  { icon: <FileCode size={80} />, name: "Python" },
   { icon: <Cloud size={80} />, name: "API Integration" },
 ];

@@ -1,32 +1,34 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { projects } from "@/constants/projects";
 
-const Projects = () => {
-  // Get date range from projects
-  const years = projects.map(p => p.year);
-  const startYear = Math.min(...years);
-  const endYear = Math.max(...years);
+const education = [
+  {
+    degree: "IT Bachelor",
+    institution: "University of SEU",
+    period: "2025 — Present",
+    description: "Currently pursuing an IT bachelor's degree, focusing on software development and computer science fundamentals.",
+  },
+];
 
+const Education = () => {
   return (
     <div className="space-y-12 sm:space-y-16">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <h2 className="text-3xl sm:text-4xl font-light hover:scale-105 transition-transform duration-300 inline-block">
-          Selected Work
+          Education
         </h2>
         <div className="text-sm text-muted-foreground font-mono hover:text-foreground transition-colors duration-300">
-          {startYear} — {endYear}
+          2025 — Present
         </div>
       </div>
 
       <div className="space-y-8 sm:space-y-12">
-        {projects.map((project, index) => {
-          // Use year from project data
-          const year = project.year;
+        {education.map((edu, index) => {
+          const year = 2025;
           
           return (
             <motion.div
-              key={project.name}
+              key={edu.institution}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
@@ -39,38 +41,18 @@ const Projects = () => {
                 </div>
               </div>
 
-              <div className="lg:col-span-6 space-y-3">
+              <div className="lg:col-span-10 space-y-3">
                 <div>
                   <h3 className="text-lg sm:text-xl font-medium group-hover:translate-x-2 transition-transform duration-300">
-                    {project.name}
+                    {edu.degree}
                   </h3>
+                  <div className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                    {edu.institution}
+                  </div>
                 </div>
                 <p className="text-muted-foreground leading-relaxed max-w-lg group-hover:text-foreground/80 transition-colors duration-300">
-                  {project.description}
+                  {edu.description}
                 </p>
-              </div>
-
-              <div className="lg:col-span-4 flex flex-wrap gap-2 lg:justify-end items-start mt-2 lg:mt-0">
-                {project.github && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-2.5 py-1 text-xs text-muted-foreground rounded-md hover:text-foreground transition-colors duration-300 whitespace-nowrap"
-                  >
-                    GitHub
-                  </a>
-                )}
-                {project.live && (
-                  <a
-                    href={project.live}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-2.5 py-1 text-xs text-muted-foreground rounded-md hover:text-foreground transition-colors duration-300 whitespace-nowrap"
-                  >
-                    Live
-                  </a>
-                )}
               </div>
             </motion.div>
           );
@@ -80,4 +62,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Education;
