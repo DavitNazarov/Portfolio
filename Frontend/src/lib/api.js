@@ -17,6 +17,10 @@ async function fetchApi(path, options = {}, useAuth = true) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
+    if (res.status === 401 && useAuth) {
+      localStorage.removeItem("token");
+      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
+    }
     const msg = data.detail || data.message || "Request failed";
     throw new Error(msg);
   }

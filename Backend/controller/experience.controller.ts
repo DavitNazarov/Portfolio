@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Experience } from "../model/Experience.model.js";
+import { IExperience } from "../types/ExperienceTypes.js";
 
 export async function createExperience(req: Request, res: Response) {
   try {
@@ -61,13 +62,7 @@ export async function updateExperience(req: Request, res: Response) {
       });
     }
 
-    const updateData: Partial<{
-      role: string;
-      company: string;
-      period: string;
-      description: string;
-      tech: string[];
-    }> = {};
+    const updateData: Partial<IExperience> = {};
 
     if (role !== undefined) updateData.role = role;
     if (company !== undefined) updateData.company = company;

@@ -2,7 +2,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ChatBotWidget from "@/components/ui/ChatBotWidget";
 import Home from "@/page/Home";
-import { Sun, Moon, LogIn, ChevronDown, LayoutDashboard, FolderKanban, Briefcase, LogOut } from "lucide-react";
+import { Sun, Moon, LogIn, ChevronDown, LayoutDashboard, FolderKanban, Briefcase, GraduationCap, LogOut } from "lucide-react";
 import Projects from "@/page/Projects";
 import Contact from "@/page/Contact";
 import Experience from "@/page/Experience";
@@ -118,6 +118,13 @@ const MainLayout = () => {
                       className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted/50"
                     >
                       <Briefcase className="w-4 h-4" /> Experience
+                    </Link>
+                    <Link
+                      to={ROUTES.DASHBOARD_EDUCATION}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted/50"
+                    >
+                      <GraduationCap className="w-4 h-4" /> Education
                     </Link>
                     <button
                       onClick={() => { setMenuOpen(false); logout(); }}

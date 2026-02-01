@@ -5,6 +5,7 @@ import LogIn from "@/page/Auth/LogIn";
 import Dashboard from "@/page/Dashboard/Dashboard";
 import DashboardProjects from "@/page/Dashboard/DashboardProjects";
 import DashboardExperience from "@/page/Dashboard/DashboardExperience";
+import DashboardEducation from "@/page/Dashboard/DashboardEducation";
 import { useAuth } from "@/context/AuthContext";
 
 function PrivateRoute({ children }) {
@@ -38,6 +39,14 @@ export function AppRoutes() {
         element={
           <PrivateRoute>
             <DashboardExperience />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={R.DASHBOARD_EDUCATION}
+        element={
+          <PrivateRoute>
+            <DashboardEducation />
           </PrivateRoute>
         }
       />

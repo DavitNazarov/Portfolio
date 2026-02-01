@@ -25,6 +25,16 @@ export function AuthProvider({ children }) {
     setLoggedIn(isLoggedIn());
   }, []);
 
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      clearToken();
+      setLoggedIn(false);
+      navigate(ROUTES.LOGIN, { replace: true });
+    };
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
+  }, [navigate]);
+
   return (
     <AuthContext.Provider value={{ loggedIn, login, logout }}>
       {children}
