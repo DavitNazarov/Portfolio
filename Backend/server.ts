@@ -1,10 +1,15 @@
 import "dotenv/config";
+import path from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routes/auth.routes.js";
 import projectsRouter from "./routes/projects.routes.js";
 import experienceRouter from "./routes/experience.routes.js";
 import educationRouter from "./routes/education.routes.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const publicDir = path.join(__dirname, "..", "public");
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
@@ -31,6 +36,12 @@ app.use("/api/auth", authRouter);
 app.use("/api/projects", projectsRouter);
 app.use("/api/experience", experienceRouter);
 app.use("/api/education", educationRouter);
+
+// Serve frontend (Vite build) and SPA fallback
+app.use(express.static(publicDir));
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(publicDir, "index.html"));
+});
 
 const mongooseOptions = {
   serverSelectionTimeoutMS: 15000,
