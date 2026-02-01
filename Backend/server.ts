@@ -1,13 +1,12 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
-import { connectDB } from "./db/connectDB.js";
 import authRouter from "./routes/auth.routes.js";
 import projectsRouter from "./routes/projects.routes.js";
 import experienceRouter from "./routes/experience.routes.js";
 import educationRouter from "./routes/education.routes.js";
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -22,22 +21,30 @@ app.use("/api/projects", projectsRouter);
 app.use("/api/experience", experienceRouter);
 app.use("/api/education", educationRouter);
 
+/** Mongoose options for Atlas on Render: timeouts + TLS-friendly defaults */
+const mongooseOptions = {
+  serverSelectionTimeoutMS: 15000,
+  connectTimeoutMS: 15000,
+};
+
 async function start() {
-  try {
-    await connectDB();
-    if (MONGO_URI) {
-      await mongoose.connect(MONGO_URI);
-      console.log("Mongoose connected");
-    } else {
-      console.error("MONGO_URI is not set in .env. API will not work.");
-    }
-    app.listen(PORT, () => {
-      console.log(`Backend running at http://localhost:${PORT}`);
-    });
-  } catch (err) {
-    console.error("Failed to start server:", err);
+  if (!MONGO_URI) {
+    console.error("MONGO_URI is not set. Set it in Render Environment (or .env).");
     process.exit(1);
   }
+
+  try {
+    await mongoose.connect(MONGO_URI, mongooseOptions);
+    console.log("Mongoose connected to MongoDB");
+  } catch (err) {
+    console.error("Failed to connect to MongoDB:", err);
+    console.error("On Render: set MONGO_URI in Environment and allow 0.0.0/0 in Atlas Network Access.");
+    process.exit(1);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Backend running on port ${PORT}`);
+  });
 }
 
 start();

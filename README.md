@@ -93,6 +93,22 @@ npm run dev:backend    # Backend only (Express)
 | `npm run build`        | Build Backend, output to `dist` |
 | `npm run start`        | Run built Backend             |
 
+## Deploy on Render (Backend + MongoDB Atlas)
+
+1. **Environment variables** (Render → Service → Environment):
+   - `MONGO_URI` — your Atlas connection string (e.g. `mongodb+srv://user:pass@cluster.mongodb.net/portfolio?retryWrites=true&w=majority`)
+   - `JWT_SECRET` — secret for JWT (any long random string)
+   - `PORT` — set by Render automatically; no need to add it
+
+2. **MongoDB Atlas Network Access** (required for Render to reach Atlas):
+   - Atlas → Network Access → Add IP Address
+   - Add **`0.0.0.0/0`** (Allow access from anywhere) so Render’s outbound IPs can connect  
+   - Without this you’ll see `MongoServerSelectionError` or TLS/SSL errors on deploy
+
+3. **Connection string**: If the password contains `@`, `#`, `:`, etc., [URL-encode](https://www.urlencoder.org/) it in the URI.
+
+4. **Build & start**: Use build command `npm install; npm run build` and start command `npm run start` (root). The backend uses Mongoose only and connects with timeouts suitable for Atlas.
+
 ## License
 
 Private / portfolio use.
