@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Experience } from "../model/Experience.model.js";
 import { IExperience } from "../types/ExperienceTypes.js";
+import { isDbConnectionError } from "../lib/dbError.js";
 
 export async function createExperience(req: Request, res: Response) {
   try {
@@ -43,8 +44,12 @@ export async function getAllExperience(req: Request, res: Response) {
     });
   } catch (error) {
     console.error("Error fetching experiences", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
+    const status = isDbConnectionError(error) ? 503 : 500;
+    res.status(status).json({
+      message:
+        status === 503
+          ? "Database not ready. Please retry in a moment."
+          : "Internal server error, please try again later",
       status: "error",
     });
   }

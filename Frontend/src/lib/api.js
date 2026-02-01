@@ -4,7 +4,7 @@ function getToken() {
   return localStorage.getItem("token");
 }
 
-async function fetchApi(path, options = {}, useAuth = true) {
+async function fetchApi(path, options = {}, useAuth = true, retried = false) {
   const token = useAuth ? getToken() : null;
   const res = await fetch(`${BASE}${path}`, {
     ...options,
@@ -17,11 +17,16 @@ async function fetchApi(path, options = {}, useAuth = true) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
+    // Retry once on 503 (DB not ready, e.g. after cold start)
+    if (res.status === 503 && !retried && options.method === "GET") {
+      await new Promise((r) => setTimeout(r, 2000));
+      return fetchApi(path, options, useAuth, true);
+    }
     if (res.status === 401 && useAuth) {
       localStorage.removeItem("token");
       window.dispatchEvent(new CustomEvent("auth:unauthorized"));
     }
-    const msg = data.detail || data.message || "Request failed";
+    const msg = data.message || data.detail || "Request failed";
     throw new Error(msg);
   }
   return data;

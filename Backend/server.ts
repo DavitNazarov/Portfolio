@@ -14,7 +14,7 @@ const publicDir = path.join(__dirname, "..", "public");
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 const JWT_SECRET = process.env.JWT_SECRET;
-const RETRY_MS = 30000; // retry MongoDB every 30s until connected
+const RETRY_MS = 10000; // retry MongoDB every 10s until connected
 
 if (!JWT_SECRET) {
   console.error("JWT_SECRET is not set in .env. Login will fail.");
@@ -30,6 +30,18 @@ app.get("/health", (_req, res) => {
     status: ready ? "ok" : "db_not_ready",
     db: ready ? "connected" : "disconnected",
   });
+});
+
+// Return 503 when DB not connected so API never returns 500 for "DB not ready"
+app.use("/api", (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      status: "error",
+      message: "Database not ready. Please retry in a moment.",
+      db: "disconnected",
+    });
+  }
+  next();
 });
 
 app.use("/api/auth", authRouter);

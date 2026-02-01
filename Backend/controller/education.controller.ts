@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Education } from "../model/education.model.js";
 import { IEducation } from "../types/educationTypes.js";
+import { isDbConnectionError } from "../lib/dbError.js";
 
 export async function getAllEducation(req: Request, res: Response) {
   try {
@@ -12,8 +13,12 @@ export async function getAllEducation(req: Request, res: Response) {
     });
   } catch (error) {
     console.error("Error fetching education", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
+    const status = isDbConnectionError(error) ? 503 : 500;
+    res.status(status).json({
+      message:
+        status === 503
+          ? "Database not ready. Please retry in a moment."
+          : "Internal server error, please try again later",
       status: "error",
     });
   }

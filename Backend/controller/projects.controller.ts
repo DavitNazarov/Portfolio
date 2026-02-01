@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Projects } from "../model/Projects.model.js";
+import { isDbConnectionError } from "../lib/dbError.js";
 
 export async function createProject(req: Request, res: Response) {
   try {
@@ -58,9 +59,13 @@ export async function getAllProjects(req: Request, res: Response) {
       projects,
     });
   } catch (error) {
-    console.error("Error creating project", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
+    console.error("Error fetching projects", error);
+    const status = isDbConnectionError(error) ? 503 : 500;
+    res.status(status).json({
+      message:
+        status === 503
+          ? "Database not ready. Please retry in a moment."
+          : "Internal server error, please try again later",
       status: "error",
     });
   }
