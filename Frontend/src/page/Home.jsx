@@ -9,6 +9,16 @@ const getYear = (period) => {
   return m ? parseInt(m[1], 10) : 0;
 };
 
+const spring = { type: "spring", stiffness: 120, damping: 24 };
+const staggerFast = { staggerChildren: 0.06, delayChildren: 0.1 };
+const staggerSlow = { staggerChildren: 0.1, delayChildren: 0.2 };
+
+const itemUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: spring,
+};
+
 const Home = () => {
   const [experiences, setExperiences] = useState([]);
   const [education, setEducation] = useState([]);
@@ -69,64 +79,99 @@ const Home = () => {
     return [...new Set(trimmed)];
   }, [projects]);
 
-  const isLoading = loading;
   const hasWork = !!currentWork;
   const hasEdu = !!currentEdu;
   const hasFocus = focusTech.length > 0;
 
-  const sectionMotion = (delay = 0) => ({
-    initial: { opacity: 0, y: 12 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.4, delay },
-  });
+  const containerVariants = {
+    initial: {},
+    animate: { transition: staggerSlow },
+  };
+
+  const leftVariants = {
+    initial: {},
+    animate: { transition: staggerFast },
+  };
+
+  const rightVariants = {
+    initial: {},
+    animate: { transition: staggerFast },
+  };
 
   return (
-    <div className="w-full max-w-4xl">
-      <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
-        {/* Left: Name + intro */}
+    <motion.div
+      className="w-full max-w-4xl"
+      initial="initial"
+      animate="animate"
+      variants={containerVariants}
+    >
+      <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
+        {/* Left: Identity & role — primary focus (F-pattern) */}
         <motion.div
-          className="lg:col-span-7 space-y-8"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className="lg:col-span-7 space-y-10 lg:space-y-12"
+          variants={leftVariants}
         >
-          <div className="space-y-4">
-            <p className="text-xs font-mono text-muted-foreground tracking-widest uppercase">
+            <motion.p
+              variants={itemUp}
+              className="text-xs font-mono text-muted-foreground tracking-[0.2em] uppercase"
+            >
               Portfolio
-            </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight text-foreground">
+            </motion.p>
+            <motion.h1
+              variants={itemUp}
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight text-foreground leading-[1.05]"
+            >
               Davit Nazarov
-            </h1>
-            {hasWork && (
-              <p className="text-lg sm:text-xl text-muted-foreground font-light">
-                {currentWork.role}
-                <span className="text-foreground/70"> at {currentWork.company}</span>
-              </p>
+            </motion.h1>
+            {hasWork ? (
+              <motion.p
+                variants={itemUp}
+                className="text-lg sm:text-xl text-muted-foreground font-light flex flex-wrap items-baseline gap-x-2 gap-y-1"
+              >
+                <span>{currentWork.role}</span>
+                <span className="text-foreground/50 font-normal" aria-hidden>·</span>
+                <span className="text-foreground/90">{currentWork.company}</span>
+              </motion.p>
+            ) : (
+              loading && (
+                <motion.div
+                  variants={itemUp}
+                  className="h-6 w-56 rounded bg-muted/40 animate-pulse"
+                />
+              )
             )}
-          </div>
+          </motion.div>
 
-          {isLoading && !hasWork && (
-            <div className="h-4 w-48 rounded bg-muted/50 animate-pulse" />
-          )}
-        </motion.div>
+          {/* Subtle visual anchor — builds trust through structure */}
+          <motion.div
+            variants={itemUp}
+            className="w-12 h-px bg-border"
+            aria-hidden
+          />
 
-        {/* Right: Currently, Education, Focus */}
-        <div className="lg:col-span-5 flex flex-col gap-10 lg:gap-12 lg:pt-2">
+        {/* Right: Credentials — supporting proof (grouped, scannable) */}
+        <motion.div
+          className="lg:col-span-5 flex flex-col gap-8 lg:gap-10 lg:pt-1"
+          variants={rightVariants}
+        >
           {/* Currently */}
-          <motion.section className="space-y-3" {...sectionMotion(0.1)}>
-            <h2 className="text-xs font-mono text-muted-foreground tracking-widest uppercase">
+          <motion.section
+            variants={itemUp}
+            className="space-y-2 pl-0 lg:pl-5 border-l-0 lg:border-l border-border lg:border-muted-foreground/30"
+          >
+            <h2 className="text-[11px] font-mono text-muted-foreground tracking-[0.18em] uppercase">
               Currently
             </h2>
-            {isLoading ? (
+            {loading ? (
               <div className="space-y-2">
-                <div className="h-5 w-32 rounded bg-muted/50 animate-pulse" />
-                <div className="h-4 w-24 rounded bg-muted/40 animate-pulse" />
+                <div className="h-5 w-28 rounded bg-muted/40 animate-pulse" />
+                <div className="h-4 w-20 rounded bg-muted/30 animate-pulse" />
               </div>
             ) : hasWork ? (
-              <div className="space-y-1">
-                <p className="text-foreground font-medium">{currentWork.role}</p>
+              <div className="space-y-0.5">
+                <p className="text-foreground font-medium tracking-tight">{currentWork.role}</p>
                 <p className="text-muted-foreground text-sm">{currentWork.company}</p>
-                <p className="text-muted-foreground/80 text-xs font-mono">{currentWork.period}</p>
+                <p className="text-muted-foreground/80 text-xs font-mono mt-1">{currentWork.period}</p>
               </div>
             ) : (
               <p className="text-muted-foreground text-sm">—</p>
@@ -134,20 +179,23 @@ const Home = () => {
           </motion.section>
 
           {/* Education */}
-          <motion.section className="space-y-3" {...sectionMotion(0.2)}>
-            <h2 className="text-xs font-mono text-muted-foreground tracking-widest uppercase">
+          <motion.section
+            variants={itemUp}
+            className="space-y-2 pl-0 lg:pl-5 border-l-0 lg:border-l border-border lg:border-muted-foreground/30"
+          >
+            <h2 className="text-[11px] font-mono text-muted-foreground tracking-[0.18em] uppercase">
               Education
             </h2>
-            {isLoading ? (
+            {loading ? (
               <div className="space-y-2">
-                <div className="h-5 w-36 rounded bg-muted/50 animate-pulse" />
-                <div className="h-4 w-28 rounded bg-muted/40 animate-pulse" />
+                <div className="h-5 w-32 rounded bg-muted/40 animate-pulse" />
+                <div className="h-4 w-24 rounded bg-muted/30 animate-pulse" />
               </div>
             ) : hasEdu ? (
-              <div className="space-y-1">
-                <p className="text-foreground font-medium">{currentEdu.degree}</p>
+              <div className="space-y-0.5">
+                <p className="text-foreground font-medium tracking-tight">{currentEdu.degree}</p>
                 <p className="text-muted-foreground text-sm">{currentEdu.institution}</p>
-                <p className="text-muted-foreground/80 text-xs font-mono">
+                <p className="text-muted-foreground/80 text-xs font-mono mt-1">
                   {currentEdu.period}
                   {currentEdu.present && (
                     <span className="ml-1.5 text-muted-foreground/60">· current</span>
@@ -159,35 +207,39 @@ const Home = () => {
             )}
           </motion.section>
 
-          {/* Focus (from experience tech) */}
-          <motion.section className="space-y-3" {...sectionMotion(0.3)}>
-            <h2 className="text-xs font-mono text-muted-foreground tracking-widest uppercase">
+          {/* Focus — skills as social proof */}
+          <motion.section
+            variants={itemUp}
+            className="space-y-3 pl-0 lg:pl-5 border-l-0 lg:border-l border-border lg:border-muted-foreground/30"
+          >
+            <h2 className="text-[11px] font-mono text-muted-foreground tracking-[0.18em] uppercase">
               Focus
             </h2>
-            {isLoading ? (
+            {loading ? (
               <div className="flex flex-wrap gap-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-7 w-16 rounded-full bg-muted/50 animate-pulse" />
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="h-8 w-14 rounded-full bg-muted/40 animate-pulse" />
                 ))}
               </div>
             ) : hasFocus ? (
-              <div className="flex flex-wrap gap-2">
+              <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
                 {focusTech.map((name) => (
-                  <span
-                    key={name}
-                    className="px-3 py-1 text-xs rounded-full border border-border bg-background/50 text-muted-foreground hover:text-foreground hover:border-muted-foreground/50 transition-colors"
-                  >
-                    {name}
-                  </span>
+                  <li key={name}>
+                    <span
+                      className="inline-block px-3 py-1.5 text-xs rounded-full border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-muted-foreground/50 hover:bg-muted/50 transition-colors duration-200 cursor-default"
+                    >
+                      {name}
+                    </span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             ) : (
               <p className="text-muted-foreground text-sm">—</p>
             )}
           </motion.section>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
