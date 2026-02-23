@@ -1,35 +1,15 @@
-import React, { useEffect, useState, useMemo } from "react";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { apiPublic } from "@/lib/api";
+import { useFetchData } from "@/hooks/useFetchData";
 import { API_ROUTES } from "@/constants/routes";
-
-const getYear = (period) => {
-  if (!period) return "";
-  const match = String(period).match(/(\d{4})/);
-  return match ? match[1] : "";
-};
+import { extractYear, sortByYear } from "@/lib/utils";
+import { ANIMATION } from "@/constants/ui";
 
 const Education = () => {
-  const [education, setEducation] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    apiPublic(API_ROUTES.EDUCATION.PUBLIC)
-      .then((data) => setEducation(data.education || []))
-      .catch(() => setEducation([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const sortedEducation = useMemo(() => {
-    return [...education].sort((a, b) => {
-      const yearA = parseInt(getYear(a.period), 10) || 0;
-      const yearB = parseInt(getYear(b.period), 10) || 0;
-      return yearB - yearA;
-    });
-  }, [education]);
-
+  const { data: education, loading } = useFetchData(API_ROUTES.EDUCATION.PUBLIC, "education");
+  const sortedEducation = useMemo(() => sortByYear(education), [education]);
   const currentEducation = useMemo(
-    () => sortedEducation.find((edu) => edu.present) || null,
+    () => sortedEducation.find((edu) => edu.present) ?? null,
     [sortedEducation]
   );
 
@@ -57,47 +37,49 @@ const Education = () => {
 
       <div className="space-y-8 sm:space-y-12">
         {sortedEducation.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            No education entries yet.
-          </p>
+          <p className="text-muted-foreground text-sm">No education entries yet.</p>
         ) : (
-          sortedEducation.map((edu, index) => {
-            const year = getYear(edu.period);
-            return (
-              <motion.div
-                key={edu._id || edu.institution + edu.degree}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
-                className="group grid lg:grid-cols-12 gap-4 sm:gap-8 py-6 sm:py-8 border-b border-border/50 hover:border-border hover:bg-muted/5 rounded-lg px-4 -mx-4 transition-all duration-500 cursor-pointer"
-              >
-                <div className="lg:col-span-2">
-                  <div className="text-xl sm:text-2xl font-light text-muted-foreground group-hover:text-foreground group-hover:scale-110 transition-all duration-500 inline-block">
-                    {year}
-                  </div>
-                </div>
-
-                <div className="lg:col-span-10 space-y-3">
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-medium group-hover:translate-x-2 transition-transform duration-300">
-                      {edu.degree}
-                    </h3>
-                    <div className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
-                      {edu.institution}
-                    </div>
-                  </div>
-                  <p className="text-muted-foreground leading-relaxed max-w-lg group-hover:text-foreground/80 transition-colors duration-300">
-                    {edu.description}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })
+          sortedEducation.map((edu, index) => (
+            <EducationCard key={edu._id || `${edu.institution}-${edu.degree}`} education={edu} index={index} />
+          ))
         )}
       </div>
     </div>
   );
 };
+
+function EducationCard({ education, index }) {
+  const year = extractYear(education.period) ?? "";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+      className="group grid lg:grid-cols-12 gap-4 sm:gap-8 py-6 sm:py-8 border-b border-border/50 hover:border-border hover:bg-muted/5 rounded-lg px-4 -mx-4 transition-all duration-500 cursor-pointer"
+    >
+      <div className="lg:col-span-2">
+        <div className="text-xl sm:text-2xl font-light text-muted-foreground group-hover:text-foreground group-hover:scale-110 transition-all duration-500 inline-block">
+          {year}
+        </div>
+      </div>
+
+      <div className="lg:col-span-10 space-y-3">
+        <div>
+          <h3 className="text-lg sm:text-xl font-medium group-hover:translate-x-2 transition-transform duration-300">
+            {education.degree}
+          </h3>
+          <div className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+            {education.institution}
+          </div>
+        </div>
+        <p className="text-muted-foreground leading-relaxed max-w-lg group-hover:text-foreground/80 transition-colors duration-300">
+          {education.description}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
 
 export default Education;

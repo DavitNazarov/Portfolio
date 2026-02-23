@@ -1,29 +1,33 @@
 import "dotenv/config";
 import path from "path";
 import { fileURLToPath } from "url";
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import { config } from "./config.js";
 import authRouter from "./routes/auth.routes.js";
 import projectsRouter from "./routes/projects.routes.js";
 import experienceRouter from "./routes/experience.routes.js";
 import educationRouter from "./routes/education.routes.js";
+import * as r from "./lib/response.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "..", "public");
 
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
-const JWT_SECRET = process.env.JWT_SECRET;
-const RETRY_MS = 10000; // retry MongoDB every 10s until connected
-
-if (!JWT_SECRET) {
+if (!config.jwtSecret) {
   console.error("JWT_SECRET is not set in .env. Login will fail.");
 }
 
 const app = express();
+
+app.use(
+  cors({
+    origin: config.frontendUrl || true,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
-// Health: so Render sees a live process; 503 when DB not ready
 app.get("/health", (_req, res) => {
   const ready = mongoose.connection.readyState === 1;
   res.status(ready ? 200 : 503).json({
@@ -32,14 +36,9 @@ app.get("/health", (_req, res) => {
   });
 });
 
-// Return 503 when DB not connected so API never returns 500 for "DB not ready"
 app.use("/api", (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({
-      status: "error",
-      message: "Database not ready. Please retry in a moment.",
-      db: "disconnected",
-    });
+    return r.serviceUnavailable(res);
   }
   next();
 });
@@ -61,12 +60,12 @@ const mongooseOptions = {
 };
 
 async function connectMongo() {
-  if (!MONGO_URI) {
-    console.error("MONGO_URI is not set. Set it in Render Environment (or .env).");
+  if (!config.mongoUri) {
+    console.error("MONGO_URI is not set. Set it in Railway Environment (or .env).");
     return false;
   }
   try {
-    await mongoose.connect(MONGO_URI, mongooseOptions);
+    await mongoose.connect(config.mongoUri, mongooseOptions);
     console.log("Mongoose connected to MongoDB");
     return true;
   } catch (err) {
@@ -77,14 +76,13 @@ async function connectMongo() {
 }
 
 async function start() {
-  // Bind port first so Render deploy succeeds even if DB is not reachable yet
-  app.listen(PORT, () => {
-    console.log(`Backend listening on port ${PORT}`);
+  app.listen(config.port, () => {
+    console.log(`Backend listening on port ${config.port}`);
   });
 
   let connected = await connectMongo();
   if (!connected) {
-    console.log(`Retrying MongoDB every ${RETRY_MS / 1000}s until Atlas Network Access allows this server (0.0.0.0/0).`);
+    console.log(`Retrying MongoDB every ${config.retryMs / 1000}s until Atlas Network Access allows this server (0.0.0.0/0).`);
     const id = setInterval(async () => {
       if (mongoose.connection.readyState === 1) {
         clearInterval(id);
@@ -92,7 +90,7 @@ async function start() {
       }
       connected = await connectMongo();
       if (connected) clearInterval(id);
-    }, RETRY_MS);
+    }, config.retryMs);
   }
 }
 

@@ -2,141 +2,75 @@ import { Request, Response } from "express";
 import { Education } from "../model/education.model.js";
 import { IEducation } from "../types/educationTypes.js";
 import { isDbConnectionError } from "../lib/dbError.js";
+import * as r from "../lib/response.js";
+
+const REQUIRED = ["degree", "institution", "period", "description", "present"] as const;
+
+function hasAll(body: Record<string, unknown>): body is Record<(typeof REQUIRED)[number], unknown> {
+  return REQUIRED.every((k) => body[k] != null);
+}
 
 export async function getAllEducation(req: Request, res: Response) {
   try {
     const education = await Education.find();
-    res.status(200).json({
-      message: "Education fetched successfully",
-      status: "success",
-      education,
-    });
+    return r.sendSuccess(res, 200, "Education fetched successfully", { education });
   } catch (error) {
     console.error("Error fetching education", error);
-    const status = isDbConnectionError(error) ? 503 : 500;
-    res.status(status).json({
-      message:
-        status === 503
-          ? "Database not ready. Please retry in a moment."
-          : "Internal server error, please try again later",
-      status: "error",
-    });
+    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
   }
 }
+
 export async function createEducation(req: Request, res: Response) {
   try {
+    if (!hasAll(req.body)) return r.badRequest(res, "All fields are required");
     const { degree, institution, period, description, present } = req.body;
-    if (!degree || !institution || !period || !description || !present) {
-      return res.status(400).json({
-        message: "All fields are required",
-        status: "error",
-      });
-    }
 
-    const existingEducation = await Education.findOne({
-      degree,
-      institution,
-      period,
-    });
-    if (existingEducation) {
-      return res.status(400).json({
-        message: `Education: ${degree} at ${institution}, already exists`,
-        status: "error",
-      });
-    }
+    const existing = await Education.findOne({ degree, institution, period });
+    if (existing) return r.badRequest(res, `Education: ${degree} at ${institution}, already exists`);
 
-    const newEducation = await Education.create({
-      degree,
-      institution,
-      period,
-      description,
-      present,
-    });
-    await newEducation.save();
-    res.status(201).json({
-      message: `Education: ${degree} at ${institution}, created successfully`,
-      status: "success",
-    });
+    await Education.create({ degree, institution, period, description, present });
+    return r.sendSuccess(res, 201, `Education: ${degree} at ${institution}, created successfully`);
   } catch (error) {
     console.error("Error creating education", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
-      status: "error",
-    });
+    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
   }
 }
 
 export async function updateEducation(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({
-        message: "Education ID is not found",
-        status: "error",
-      });
-    }
+    if (!id) return r.badRequest(res, "Education ID is required");
+    if (!hasAll(req.body)) return r.badRequest(res, "All fields are required");
+
     const { degree, institution, period, description, present } = req.body;
-    if (!degree || !institution || !period || !description || !present) {
-      return res.status(400).json({
-        message: "All fields are required",
-        status: "error",
-      });
-    }
     const updateData: Partial<IEducation> = {};
-    if (degree !== undefined) updateData.degree = degree;
-    if (institution !== undefined) updateData.institution = institution;
-    if (period !== undefined) updateData.period = period;
-    if (description !== undefined) updateData.description = description;
-    if (present !== undefined) updateData.present = present;
+    if (degree != null) updateData.degree = String(degree);
+    if (institution != null) updateData.institution = String(institution);
+    if (period != null) updateData.period = String(period);
+    if (description != null) updateData.description = String(description);
+    if (present != null) updateData.present = Boolean(present);
 
-    const education = await Education.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    const education = await Education.findByIdAndUpdate(id, updateData, { new: true });
+    if (!education) return r.notFound(res, "Education is not found");
 
-    if (!education) {
-      return res.status(404).json({
-        message: "Education is not found",
-        status: "error",
-      });
-    }
-
-    res.status(200).json({
-      message: `Education: ${degree} at ${institution}, updated successfully`,
-      status: "success",
-    });
+    return r.sendSuccess(res, 200, `Education: ${degree} at ${institution}, updated successfully`);
   } catch (error) {
     console.error("Error updating education", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
-      status: "error",
-    });
+    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
   }
 }
+
 export async function deleteEducation(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({
-        message: "Education ID is not found",
-        status: "error",
-      });
-    }
+    if (!id) return r.badRequest(res, "Education ID is required");
+
     const education = await Education.findByIdAndDelete(id);
-    if (!education) {
-      return res.status(404).json({
-        message: "Education is not found",
-        status: "error",
-      });
-    }
-    res.status(200).json({
-      message: `Education: ${education?.degree} at ${education?.institution}, deleted successfully`,
-      status: "success",
-    });
+    if (!education) return r.notFound(res, "Education is not found");
+
+    return r.sendSuccess(res, 200, `Education: ${education.degree} at ${education.institution}, deleted successfully`);
   } catch (error) {
     console.error("Error deleting education", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
-      status: "error",
-    });
+    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
   }
 }

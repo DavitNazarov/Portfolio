@@ -1,97 +1,47 @@
 import { Request, Response } from "express";
 import { Projects } from "../model/Projects.model.js";
 import { isDbConnectionError } from "../lib/dbError.js";
+import * as r from "../lib/response.js";
+
+const REQUIRED = ["name", "description", "year", "githubLink", "liveLink", "technologies"] as const;
+
+function hasAll(body: Record<string, unknown>): body is Record<(typeof REQUIRED)[number], unknown> {
+  return REQUIRED.every((k) => body[k] != null && (Array.isArray(body[k]) ? (body[k] as unknown[]).length > 0 : true));
+}
 
 export async function createProject(req: Request, res: Response) {
   try {
-    const { name, description, year, githubLink, liveLink, technologies } =
-      req.body;
-    if (
-      !name ||
-      !description ||
-      !year ||
-      !githubLink ||
-      !liveLink ||
-      !technologies
-    ) {
-      return res.status(400).json({
-        message: "All fields are required",
-        status: "error",
-      });
-    }
+    if (!hasAll(req.body)) return r.badRequest(res, "All fields are required");
+    const { name, description, year, githubLink, liveLink, technologies } = req.body;
 
-    const existingProject = await Projects.findOne({ name });
-    if (existingProject) {
-      return res.status(400).json({
-        message: `Project:${name} already exists`,
-        status: "error",
-      });
-    }
+    const existing = await Projects.findOne({ name });
+    if (existing) return r.badRequest(res, `Project "${name}" already exists`);
 
-    const newProject = await Projects.create({
-      name,
-      description,
-      year,
-      githubLink,
-      liveLink,
-      technologies,
-    });
-    await newProject.save();
-    res.status(201).json({
-      message: `Project:${name}, created successfully`,
-      status: "success",
-    });
+    await Projects.create({ name, description, year, githubLink, liveLink, technologies });
+    return r.sendSuccess(res, 201, `Project "${name}", created successfully`);
   } catch (error) {
     console.error("Error creating project", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
-      status: "error",
-    });
+    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
   }
 }
 
 export async function getAllProjects(req: Request, res: Response) {
   try {
     const projects = await Projects.find();
-    res.status(200).json({
-      message: "Projects fetched successfully",
-      status: "success",
-      projects,
-    });
+    return r.sendSuccess(res, 200, "Projects fetched successfully", { projects });
   } catch (error) {
     console.error("Error fetching projects", error);
-    const status = isDbConnectionError(error) ? 503 : 500;
-    res.status(status).json({
-      message:
-        status === 503
-          ? "Database not ready. Please retry in a moment."
-          : "Internal server error, please try again later",
-      status: "error",
-    });
+    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
   }
 }
 
 export async function updateProject(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    const { name, description, year, githubLink, liveLink, technologies } =
-      req.body;
-    if (!id) {
-      return res.status(400).json({
-        message: "Project ID is required",
-        status: "error",
-      });
-    }
+    if (!id) return r.badRequest(res, "Project ID is required");
 
-    // Only update fields that were actually sent (partial update support)
-    const updateData: Partial<{
-      name: string;
-      description: string;
-      year: number;
-      githubLink: string;
-      liveLink: string;
-      technologies: string[];
-    }> = {};
+    const updateData: Partial<{ name: string; description: string; year: number; githubLink: string; liveLink: string; technologies: string[] }> = {};
+    const { name, description, year, githubLink, liveLink, technologies } = req.body;
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
     if (year !== undefined) updateData.year = Number(year);
@@ -99,54 +49,27 @@ export async function updateProject(req: Request, res: Response) {
     if (liveLink !== undefined) updateData.liveLink = liveLink;
     if (technologies !== undefined) updateData.technologies = technologies;
 
-    const project = await Projects.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    const project = await Projects.findByIdAndUpdate(id, updateData, { new: true });
+    if (!project) return r.notFound(res, "Project is not found");
 
-    if (!project) {
-      return res.status(404).json({
-        message: "Project is not found",
-        status: "error",
-      });
-    }
-
-    res.status(200).json({
-      message: `Project: "${project.name}" from ${project.year}, updated successfully`,
-      status: "success",
-    });
+    return r.sendSuccess(res, 200, `Project "${project.name}" from ${project.year}, updated successfully`);
   } catch (error) {
     console.error("Error updating project", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
-      status: "error",
-    });
+    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
   }
 }
+
 export async function deleteProject(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({
-        message: "Project ID is required",
-        status: "error",
-      });
-    }
+    if (!id) return r.badRequest(res, "Project ID is required");
+
     const project = await Projects.findByIdAndDelete(id);
-    if (!project) {
-      return res.status(404).json({
-        message: "Project is not found",
-        status: "error",
-      });
-    }
-    res.status(200).json({
-      message: `Project: "${project.name}", deleted successfully`,
-      status: "success",
-    });
+    if (!project) return r.notFound(res, "Project is not found");
+
+    return r.sendSuccess(res, 200, `Project "${project.name}", deleted successfully`);
   } catch (error) {
     console.error("Error deleting project", error);
-    res.status(500).json({
-      message: "Internal server error, please try again later",
-      status: "error",
-    });
+    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
   }
 }

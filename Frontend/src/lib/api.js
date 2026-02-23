@@ -1,12 +1,33 @@
-const BASE = import.meta.env.VITE_API_URL || "";
+/**
+ * API client for the portfolio backend.
+ * Set VITE_API_URL in Vercel to your Railway public URL (e.g. https://xxx.up.railway.app).
+ * In local dev, leave unset to use Vite proxy.
+ */
+
+const TOKEN_KEY = "token";
+const RETRY_DELAY_MS = 2000;
+
+const getBaseUrl = () => (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
 function getToken() {
-  return localStorage.getItem("token");
+  return localStorage.getItem(TOKEN_KEY);
 }
 
-async function fetchApi(path, options = {}, useAuth = true, retried = false) {
+function buildUrl(path) {
+  const base = getBaseUrl();
+  return base ? `${base}${path}` : path;
+}
+
+function handleUnauthorized() {
+  localStorage.removeItem(TOKEN_KEY);
+  window.dispatchEvent(new CustomEvent("auth:unauthorized"));
+}
+
+async function request(path, options = {}, useAuth = true, retried = false) {
+  const url = buildUrl(path);
   const token = useAuth ? getToken() : null;
-  const res = await fetch(`${BASE}${path}`, {
+
+  const response = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -15,38 +36,40 @@ async function fetchApi(path, options = {}, useAuth = true, retried = false) {
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    // Retry once on 503 (DB not ready, e.g. after cold start)
-    if (res.status === 503 && !retried && options.method === "GET") {
-      await new Promise((r) => setTimeout(r, 2000));
-      return fetchApi(path, options, useAuth, true);
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    if (response.status === 503 && !retried && options.method === "GET") {
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      return request(path, options, useAuth, true);
     }
-    if (res.status === 401 && useAuth) {
-      localStorage.removeItem("token");
-      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
+    if (response.status === 401 && useAuth) {
+      handleUnauthorized();
     }
-    const msg = data.message || data.detail || "Request failed";
-    throw new Error(msg);
+    const message = data.message ?? data.detail ?? "Request failed";
+    throw new Error(message);
   }
+
   return data;
 }
 
+/** Authenticated API request (includes Bearer token). */
 export async function api(path, options = {}) {
-  return fetchApi(path, options, true);
+  return request(path, options, true);
 }
 
-/** Public fetch (no auth) for portfolio pages */
+/** Public API request (no auth). Use for portfolio pages. */
 export async function apiPublic(path) {
-  return fetchApi(path, { method: "GET" }, false);
+  return request(path, { method: "GET" }, false);
 }
 
 export function setToken(token) {
-  localStorage.setItem("token", token);
+  localStorage.setItem(TOKEN_KEY, token);
 }
 
 export function clearToken() {
-  localStorage.removeItem("token");
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 export function isLoggedIn() {

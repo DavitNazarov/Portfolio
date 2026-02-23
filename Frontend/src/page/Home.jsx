@@ -1,23 +1,9 @@
-import React, { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { apiPublic } from "@/lib/api";
 import { API_ROUTES } from "@/constants/routes";
-
-const getYear = (period) => {
-  if (!period) return 0;
-  const m = String(period).match(/(\d{4})/);
-  return m ? parseInt(m[1], 10) : 0;
-};
-
-const spring = { type: "spring", stiffness: 120, damping: 24 };
-const staggerFast = { staggerChildren: 0.06, delayChildren: 0.1 };
-const staggerSlow = { staggerChildren: 0.1, delayChildren: 0.2 };
-
-const itemUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: spring,
-};
+import { sortByYear } from "@/lib/utils";
+import { ANIMATION } from "@/constants/ui";
 
 const Home = () => {
   const [experiences, setExperiences] = useState([]);
@@ -26,148 +12,95 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      apiPublic(API_ROUTES.EXPERIENCE.PUBLIC).then((d) => d.experiences || []),
-      apiPublic(API_ROUTES.EDUCATION.PUBLIC).then((d) => d.education || []),
-      apiPublic(API_ROUTES.PROJECTS.PUBLIC).then((d) => d.projects || []),
-    ])
-      .then(([exp, edu, proj]) => {
-        setExperiences(exp);
-        setEducation(edu);
-        setProjects(proj);
-      })
-      .catch(() => {
+    const fetchAll = async () => {
+      try {
+        const [expRes, eduRes, projRes] = await Promise.all([
+          apiPublic(API_ROUTES.EXPERIENCE.PUBLIC),
+          apiPublic(API_ROUTES.EDUCATION.PUBLIC),
+          apiPublic(API_ROUTES.PROJECTS.PUBLIC),
+        ]);
+        setExperiences(expRes.experiences ?? []);
+        setEducation(eduRes.education ?? []);
+        setProjects(projRes.projects ?? []);
+      } catch {
         setExperiences([]);
         setEducation([]);
         setProjects([]);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
   }, []);
 
-  const sortedExperiences = useMemo(
-    () =>
-      [...experiences].sort(
-        (a, b) => getYear(b.period) - getYear(a.period)
-      ),
-    [experiences]
-  );
+  const sortedExperiences = useMemo(() => sortByYear(experiences), [experiences]);
+  const currentWork = useMemo(() => sortedExperiences[0], [sortedExperiences]);
 
-  const currentWork = useMemo(
-    () => sortedExperiences[0],
-    [sortedExperiences]
-  );
-
-  const sortedEducation = useMemo(
-    () =>
-      [...education].sort(
-        (a, b) => getYear(b.period) - getYear(a.period)
-      ),
-    [education]
-  );
-
+  const sortedEducation = useMemo(() => sortByYear(education), [education]);
   const currentEdu = useMemo(
-    () =>
-      sortedEducation.find((e) => e.present) || sortedEducation[0],
+    () => sortedEducation.find((e) => e.present) ?? sortedEducation[0],
     [sortedEducation]
   );
 
   const focusTech = useMemo(() => {
-    const all = (projects || []).flatMap((p) =>
-      Array.isArray(p.technologies) ? p.technologies : []
-    );
+    const all = projects.flatMap((p) => (Array.isArray(p.technologies) ? p.technologies : []));
     const trimmed = all.map((t) => (typeof t === "string" ? t.trim() : String(t))).filter(Boolean);
     return [...new Set(trimmed)];
   }, [projects]);
-
-  const hasWork = !!currentWork;
-  const hasEdu = !!currentEdu;
-  const hasFocus = focusTech.length > 0;
-
-  const containerVariants = {
-    initial: {},
-    animate: { transition: staggerSlow },
-  };
-
-  const leftVariants = {
-    initial: {},
-    animate: { transition: staggerFast },
-  };
-
-  const rightVariants = {
-    initial: {},
-    animate: { transition: staggerFast },
-  };
 
   return (
     <motion.div
       className="w-full max-w-4xl"
       initial="initial"
       animate="animate"
-      variants={containerVariants}
+      variants={{ initial: {}, animate: { transition: ANIMATION.staggerSlow } }}
     >
       <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
-        {/* Left: Identity & role — primary focus (F-pattern) */}
         <motion.div
           className="lg:col-span-7 space-y-10 lg:space-y-12"
-          variants={leftVariants}
+          variants={{ initial: {}, animate: { transition: ANIMATION.staggerFast } }}
         >
+          <motion.p
+            variants={ANIMATION.itemUp}
+            className="text-xs font-mono text-muted-foreground tracking-[0.2em] uppercase"
+          >
+            Portfolio
+          </motion.p>
+          <motion.h1
+            variants={ANIMATION.itemUp}
+            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight text-foreground leading-[1.05]"
+          >
+            Davit Nazarov
+          </motion.h1>
+          {currentWork ? (
             <motion.p
-              variants={itemUp}
-              className="text-xs font-mono text-muted-foreground tracking-[0.2em] uppercase"
+              variants={ANIMATION.itemUp}
+              className="text-lg sm:text-xl text-muted-foreground font-light flex flex-wrap items-baseline gap-x-2 gap-y-1"
             >
-              Portfolio
+              <span>{currentWork.role}</span>
+              <span className="text-foreground/50 font-normal" aria-hidden>
+                ·
+              </span>
+              <span className="text-foreground/90">{currentWork.company}</span>
             </motion.p>
-            <motion.h1
-              variants={itemUp}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight text-foreground leading-[1.05]"
-            >
-              Davit Nazarov
-            </motion.h1>
-            {hasWork ? (
-              <motion.p
-                variants={itemUp}
-                className="text-lg sm:text-xl text-muted-foreground font-light flex flex-wrap items-baseline gap-x-2 gap-y-1"
-              >
-                <span>{currentWork.role}</span>
-                <span className="text-foreground/50 font-normal" aria-hidden>·</span>
-                <span className="text-foreground/90">{currentWork.company}</span>
-              </motion.p>
-            ) : (
-              loading && (
-                <motion.div
-                  variants={itemUp}
-                  className="h-6 w-56 rounded bg-muted/40 animate-pulse"
-                />
-              )
-            )}
-          </motion.div>
+          ) : (
+            loading && (
+              <motion.div
+                variants={ANIMATION.itemUp}
+                className="h-6 w-56 rounded bg-muted/40 animate-pulse"
+              />
+            )
+          )}
+        </motion.div>
 
-          {/* Subtle visual anchor — builds trust through structure */}
-          <motion.div
-            variants={itemUp}
-            className="w-12 h-px bg-border"
-            aria-hidden
-          />
+        <motion.div variants={ANIMATION.itemUp} className="w-12 h-px bg-border" aria-hidden />
 
-        {/* Right: Credentials — supporting proof (grouped, scannable) */}
         <motion.div
           className="lg:col-span-5 flex flex-col gap-8 lg:gap-10 lg:pt-1"
-          variants={rightVariants}
+          variants={{ initial: {}, animate: { transition: ANIMATION.staggerFast } }}
         >
-          {/* Currently */}
-          <motion.section
-            variants={itemUp}
-            className="space-y-2 pl-0 lg:pl-5 border-l-0 lg:border-l border-border lg:border-muted-foreground/30"
-          >
-            <h2 className="text-[11px] font-mono text-muted-foreground tracking-[0.18em] uppercase">
-              Currently
-            </h2>
-            {loading ? (
-              <div className="space-y-2">
-                <div className="h-5 w-28 rounded bg-muted/40 animate-pulse" />
-                <div className="h-4 w-20 rounded bg-muted/30 animate-pulse" />
-              </div>
-            ) : hasWork ? (
+          <InfoSection title="Currently" loading={loading}>
+            {currentWork ? (
               <div className="space-y-0.5">
                 <p className="text-foreground font-medium tracking-tight">{currentWork.role}</p>
                 <p className="text-muted-foreground text-sm">{currentWork.company}</p>
@@ -176,22 +109,10 @@ const Home = () => {
             ) : (
               <p className="text-muted-foreground text-sm">—</p>
             )}
-          </motion.section>
+          </InfoSection>
 
-          {/* Education */}
-          <motion.section
-            variants={itemUp}
-            className="space-y-2 pl-0 lg:pl-5 border-l-0 lg:border-l border-border lg:border-muted-foreground/30"
-          >
-            <h2 className="text-[11px] font-mono text-muted-foreground tracking-[0.18em] uppercase">
-              Education
-            </h2>
-            {loading ? (
-              <div className="space-y-2">
-                <div className="h-5 w-32 rounded bg-muted/40 animate-pulse" />
-                <div className="h-4 w-24 rounded bg-muted/30 animate-pulse" />
-              </div>
-            ) : hasEdu ? (
+          <InfoSection title="Education" loading={loading}>
+            {currentEdu ? (
               <div className="space-y-0.5">
                 <p className="text-foreground font-medium tracking-tight">{currentEdu.degree}</p>
                 <p className="text-muted-foreground text-sm">{currentEdu.institution}</p>
@@ -205,29 +126,14 @@ const Home = () => {
             ) : (
               <p className="text-muted-foreground text-sm">—</p>
             )}
-          </motion.section>
+          </InfoSection>
 
-          {/* Focus — skills as social proof */}
-          <motion.section
-            variants={itemUp}
-            className="space-y-3 pl-0 lg:pl-5 border-l-0 lg:border-l border-border lg:border-muted-foreground/30"
-          >
-            <h2 className="text-[11px] font-mono text-muted-foreground tracking-[0.18em] uppercase">
-              Focus
-            </h2>
-            {loading ? (
-              <div className="flex flex-wrap gap-2">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-8 w-14 rounded-full bg-muted/40 animate-pulse" />
-                ))}
-              </div>
-            ) : hasFocus ? (
+          <InfoSection title="Focus" loading={loading}>
+            {focusTech.length > 0 ? (
               <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
                 {focusTech.map((name) => (
                   <li key={name}>
-                    <span
-                      className="inline-block px-3 py-1.5 text-xs rounded-full border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-muted-foreground/50 hover:bg-muted/50 transition-colors duration-200 cursor-default"
-                    >
+                    <span className="inline-block px-3 py-1.5 text-xs rounded-full border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-muted-foreground/50 hover:bg-muted/50 transition-colors duration-200 cursor-default">
                       {name}
                     </span>
                   </li>
@@ -236,11 +142,32 @@ const Home = () => {
             ) : (
               <p className="text-muted-foreground text-sm">—</p>
             )}
-          </motion.section>
+          </InfoSection>
         </motion.div>
       </div>
     </motion.div>
   );
 };
+
+function InfoSection({ title, loading, children }) {
+  const sectionClass =
+    "space-y-2 pl-0 lg:pl-5 border-l-0 lg:border-l border-border lg:border-muted-foreground/30";
+
+  return (
+    <motion.section variants={ANIMATION.itemUp} className={sectionClass}>
+      <h2 className="text-[11px] font-mono text-muted-foreground tracking-[0.18em] uppercase">
+        {title}
+      </h2>
+      {loading ? (
+        <div className="space-y-2">
+          <div className="h-5 w-28 rounded bg-muted/40 animate-pulse" />
+          <div className="h-4 w-20 rounded bg-muted/30 animate-pulse" />
+        </div>
+      ) : (
+        children
+      )}
+    </motion.section>
+  );
+}
 
 export default Home;

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { isLoggedIn, clearToken, setToken as saveToken } from "@/lib/api";
-import { ROUTES } from "@/constants/routes";
 import { useNavigate } from "react-router-dom";
+import { isLoggedIn, clearToken, setToken } from "@/lib/api";
+import { ROUTES } from "@/constants/routes";
 
 const AuthContext = createContext(null);
 
@@ -9,17 +9,23 @@ export function AuthProvider({ children }) {
   const [loggedIn, setLoggedIn] = useState(isLoggedIn);
   const navigate = useNavigate();
 
-  const login = useCallback((token) => {
-    saveToken(token);
-    setLoggedIn(true);
-    navigate(ROUTES.DASHBOARD);
-  }, [navigate]);
+  const login = useCallback(
+    (token) => {
+      setToken(token);
+      setLoggedIn(true);
+      navigate(ROUTES.DASHBOARD);
+    },
+    [navigate]
+  );
 
-  const logout = useCallback(() => {
-    clearToken();
-    setLoggedIn(false);
-    navigate(ROUTES.HOME);
-  }, [navigate]);
+  const logout = useCallback(
+    () => {
+      clearToken();
+      setLoggedIn(false);
+      navigate(ROUTES.HOME);
+    },
+    [navigate]
+  );
 
   useEffect(() => {
     setLoggedIn(isLoggedIn());
@@ -43,7 +49,9 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+  return context;
 }
