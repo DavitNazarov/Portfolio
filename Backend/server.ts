@@ -61,7 +61,7 @@ const mongooseOptions = {
 
 async function connectMongo() {
   if (!config.mongoUri) {
-    console.error("MONGO_URI is not set. Set it in Railway Environment (or .env).");
+    console.error("MONGO_URI is not set. Set it in Render Environment Variables (or .env for local dev).");
     return false;
   }
   try {

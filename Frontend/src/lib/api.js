@@ -1,7 +1,7 @@
 /**
  * API client for the portfolio backend.
- * Set VITE_API_URL in Vercel to your Railway public URL (e.g. https://xxx.up.railway.app).
- * In local dev, leave unset to use Vite proxy.
+ * On Render, frontend and backend share the same domain — leave VITE_API_URL unset.
+ * In local dev, leave unset to use Vite proxy (proxied to localhost:3000).
  */
 
 const TOKEN_KEY = "token";
