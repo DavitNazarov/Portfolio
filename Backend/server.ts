@@ -9,6 +9,7 @@ import authRouter from "./routes/auth.routes.js";
 import projectsRouter from "./routes/projects.routes.js";
 import experienceRouter from "./routes/experience.routes.js";
 import educationRouter from "./routes/education.routes.js";
+import notifyRouter from "./routes/notify.routes.js";
 import * as r from "./lib/response.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -48,6 +49,9 @@ app.get("/health", (_req, res) => {
     db: ready ? "connected" : "disconnected",
   });
 });
+
+// Notifications don't depend on MongoDB — mount before the DB gate.
+app.use("/api/notify", notifyRouter);
 
 app.use("/api", (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {

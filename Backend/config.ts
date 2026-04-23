@@ -12,4 +12,7 @@ export const config = {
   allowPublicRegistration: process.env.ALLOW_PUBLIC_REGISTRATION === "true",
   isProduction: process.env.NODE_ENV === "production",
   retryMs: 10000,
+  resendApiKey: process.env.RESEND_API_KEY,
+  notifyEmail: process.env.NOTIFY_EMAIL || "nazarov.davit17@gmail.com",
+  notifyFrom: process.env.NOTIFY_FROM || "Portfolio <onboarding@resend.dev>",
 } as const;

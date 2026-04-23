@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { AppRoutes } from "@/routes";
 import CustomCursor from "@/components/ui/CustomCursor";
+import { trackVisit } from "@/lib/notify";
 import Lenis from "lenis";
 
 function App() {
@@ -22,6 +23,10 @@ function App() {
     requestAnimationFrame(raf);
 
     return () => lenis.destroy();
+  }, []);
+
+  useEffect(() => {
+    trackVisit();
   }, []);
 
   return (
