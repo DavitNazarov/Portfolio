@@ -22,7 +22,7 @@ export default function LogIn() {
         method: "POST",
         body: { email, password },
       });
-      if (data.token) login(data.token);
+      if (data.token) login(data.token, data.role);
     } catch (err) {
       setError(err.message || "Login failed");
     } finally {

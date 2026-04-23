@@ -8,9 +8,10 @@ import DashboardExperience from "@/page/Dashboard/DashboardExperience";
 import DashboardEducation from "@/page/Dashboard/DashboardEducation";
 import { useAuth } from "@/context/AuthContext";
 
-function PrivateRoute({ children }) {
-  const { loggedIn } = useAuth();
-  return loggedIn ? children : <Navigate to={R.LOGIN} replace />;
+function AdminRoute({ children }) {
+  const { loggedIn, isAdmin } = useAuth();
+  if (!loggedIn) return <Navigate to={R.LOGIN} replace />;
+  return isAdmin ? children : <Navigate to={R.HOME} replace />;
 }
 
 export function AppRoutes() {
@@ -21,33 +22,33 @@ export function AppRoutes() {
       <Route
         path={R.DASHBOARD}
         element={
-          <PrivateRoute>
+          <AdminRoute>
             <Dashboard />
-          </PrivateRoute>
+          </AdminRoute>
         }
       />
       <Route
         path={R.DASHBOARD_PROJECTS}
         element={
-          <PrivateRoute>
+          <AdminRoute>
             <DashboardProjects />
-          </PrivateRoute>
+          </AdminRoute>
         }
       />
       <Route
         path={R.DASHBOARD_EXPERIENCE}
         element={
-          <PrivateRoute>
+          <AdminRoute>
             <DashboardExperience />
-          </PrivateRoute>
+          </AdminRoute>
         }
       />
       <Route
         path={R.DASHBOARD_EDUCATION}
         element={
-          <PrivateRoute>
+          <AdminRoute>
             <DashboardEducation />
-          </PrivateRoute>
+          </AdminRoute>
         }
       />
       <Route path="*" element={<Navigate to={R.HOME} replace />} />

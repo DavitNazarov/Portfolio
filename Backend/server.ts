@@ -19,14 +19,27 @@ if (!config.jwtSecret) {
 }
 
 const app = express();
+const allowedOrigins = new Set(
+  config.isProduction
+    ? config.frontendUrls
+    : [...config.frontendUrls, "http://localhost:5173", "http://127.0.0.1:5173"]
+);
+
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: config.frontendUrl || true,
-    credentials: true,
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+      return callback(null, allowedOrigins.has(origin));
+    },
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: false,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "16kb" }));
 
 app.get("/health", (_req, res) => {
   const ready = mongoose.connection.readyState === 1;

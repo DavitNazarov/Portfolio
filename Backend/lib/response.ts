@@ -18,6 +18,10 @@ export function unauthorized(res: Response, message = "Unauthorized, please logi
   return sendError(res, 401, message);
 }
 
+export function forbidden(res: Response, message = "Forbidden") {
+  return sendError(res, 403, message);
+}
+
 export function notFound(res: Response, message: string) {
   return sendError(res, 404, message);
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import { loggedInUser } from "../middleware/auth.middleware.js";
+import { loggedInUser, requireAdmin } from "../middleware/auth.middleware.js";
 import {
   createExperience,
   getAllExperience,
@@ -9,17 +9,19 @@ import {
 const experienceRouter = express.Router();
 
 experienceRouter.get("/public", getAllExperience);
-experienceRouter.post("/create-experience", loggedInUser, createExperience);
-experienceRouter.get("/get-all-experience", loggedInUser, getAllExperience);
+experienceRouter.post("/create-experience", loggedInUser, requireAdmin, createExperience);
+experienceRouter.get("/get-all-experience", loggedInUser, requireAdmin, getAllExperience);
 
 experienceRouter.patch(
   "/update-experience/:id",
   loggedInUser,
+  requireAdmin,
   updateExperience
 );
 experienceRouter.delete(
   "/delete-experience/:id",
   loggedInUser,
+  requireAdmin,
   deleteExperience
 );
 export default experienceRouter;

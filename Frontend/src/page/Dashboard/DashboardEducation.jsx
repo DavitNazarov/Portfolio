@@ -43,9 +43,8 @@ export default function DashboardEducation() {
     save,
     remove,
   } = useDashboardList({
-    listPath: API_ROUTES.EDUCATION.PUBLIC,
+    listPath: API_ROUTES.EDUCATION.ALL,
     dataKey: "education",
-    publicList: true,
     emptyForm: EMPTY_EDU,
     formFromItem: formFromEducation,
     buildPayload,

@@ -5,12 +5,32 @@
  */
 
 const TOKEN_KEY = "token";
+const ROLE_KEY = "user_role";
 const RETRY_DELAY_MS = 2000;
 
 const getBaseUrl = () => (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
 function getToken() {
   return localStorage.getItem(TOKEN_KEY);
+}
+
+function decodeJwtPayload(token) {
+  if (!token) return null;
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return null;
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized + "=".repeat((4 - (normalized.length % 4 || 4)) % 4);
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+}
+
+function normalizeRole(role) {
+  if (typeof role !== "string") return null;
+  const normalized = role.trim().toLowerCase();
+  return normalized === "admin" || normalized === "viewer" ? normalized : null;
 }
 
 function buildUrl(path) {
@@ -20,6 +40,7 @@ function buildUrl(path) {
 
 function handleUnauthorized() {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(ROLE_KEY);
   window.dispatchEvent(new CustomEvent("auth:unauthorized"));
 }
 
@@ -64,14 +85,27 @@ export async function apiPublic(path) {
   return request(path, { method: "GET" }, false);
 }
 
-export function setToken(token) {
+export function setToken(token, role) {
   localStorage.setItem(TOKEN_KEY, token);
+  const resolvedRole = normalizeRole(role) ?? normalizeRole(decodeJwtPayload(token)?.role);
+  if (resolvedRole) {
+    localStorage.setItem(ROLE_KEY, resolvedRole);
+  } else {
+    localStorage.removeItem(ROLE_KEY);
+  }
 }
 
 export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(ROLE_KEY);
 }
 
 export function isLoggedIn() {
   return !!getToken();
+}
+
+export function getRole() {
+  const stored = normalizeRole(localStorage.getItem(ROLE_KEY));
+  if (stored) return stored;
+  return normalizeRole(decodeJwtPayload(getToken())?.role);
 }

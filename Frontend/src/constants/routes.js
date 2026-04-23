@@ -31,6 +31,7 @@ export const API_ROUTES = {
   },
   EDUCATION: {
     PUBLIC: "/api/education/public",
+    ALL: "/api/education/get-all-education",
     CREATE: "/api/education/create-education",
     UPDATE: (id) => `/api/education/update-education/${id}`,
     DELETE: (id) => `/api/education/delete-education/${id}`,

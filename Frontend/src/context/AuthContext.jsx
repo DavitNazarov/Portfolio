@@ -1,19 +1,22 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { isLoggedIn, clearToken, setToken } from "@/lib/api";
+import { isLoggedIn, clearToken, setToken, getRole } from "@/lib/api";
 import { ROUTES } from "@/constants/routes";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [loggedIn, setLoggedIn] = useState(isLoggedIn);
+  const [role, setRole] = useState(getRole);
   const navigate = useNavigate();
 
   const login = useCallback(
-    (token) => {
-      setToken(token);
+    (token, nextRole) => {
+      setToken(token, nextRole);
       setLoggedIn(true);
-      navigate(ROUTES.DASHBOARD);
+      const resolvedRole = getRole();
+      setRole(resolvedRole);
+      navigate(resolvedRole === "admin" ? ROUTES.DASHBOARD : ROUTES.HOME);
     },
     [navigate]
   );
@@ -22,6 +25,7 @@ export function AuthProvider({ children }) {
     () => {
       clearToken();
       setLoggedIn(false);
+      setRole(null);
       navigate(ROUTES.HOME);
     },
     [navigate]
@@ -29,12 +33,14 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     setLoggedIn(isLoggedIn());
+    setRole(getRole());
   }, []);
 
   useEffect(() => {
     const handleUnauthorized = () => {
       clearToken();
       setLoggedIn(false);
+      setRole(null);
       navigate(ROUTES.LOGIN, { replace: true });
     };
     window.addEventListener("auth:unauthorized", handleUnauthorized);
@@ -42,7 +48,7 @@ export function AuthProvider({ children }) {
   }, [navigate]);
 
   return (
-    <AuthContext.Provider value={{ loggedIn, login, logout }}>
+    <AuthContext.Provider value={{ loggedIn, role, isAdmin: role === "admin", login, logout }}>
       {children}
     </AuthContext.Provider>
   );
