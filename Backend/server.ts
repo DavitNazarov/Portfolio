@@ -9,6 +9,7 @@ import authRouter from "./routes/auth.routes.js";
 import projectsRouter from "./routes/projects.routes.js";
 import experienceRouter from "./routes/experience.routes.js";
 import educationRouter from "./routes/education.routes.js";
+import awardRouter from "./routes/award.routes.js";
 import notifyRouter from "./routes/notify.routes.js";
 import * as r from "./lib/response.js";
 
@@ -64,6 +65,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/projects", projectsRouter);
 app.use("/api/experience", experienceRouter);
 app.use("/api/education", educationRouter);
+app.use("/api/awards", awardRouter);
 
 // Serve frontend (Vite build) and SPA fallback
 app.use(express.static(publicDir));

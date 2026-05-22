@@ -6,6 +6,7 @@ import Dashboard from "@/page/Dashboard/Dashboard";
 import DashboardProjects from "@/page/Dashboard/DashboardProjects";
 import DashboardExperience from "@/page/Dashboard/DashboardExperience";
 import DashboardEducation from "@/page/Dashboard/DashboardEducation";
+import DashboardAwards from "@/page/Dashboard/DashboardAwards";
 import { useAuth } from "@/context/AuthContext";
 
 function AdminRoute({ children }) {
@@ -48,6 +49,14 @@ export function AppRoutes() {
         element={
           <AdminRoute>
             <DashboardEducation />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path={R.DASHBOARD_AWARDS}
+        element={
+          <AdminRoute>
+            <DashboardAwards />
           </AdminRoute>
         }
       />

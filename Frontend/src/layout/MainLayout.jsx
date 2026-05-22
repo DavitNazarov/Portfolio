@@ -6,7 +6,7 @@ import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import Home from "@/page/Home";
 import {
   Sun, Moon, LogIn, ChevronDown, LayoutDashboard,
-  FolderKanban, Briefcase, GraduationCap, LogOut,
+  FolderKanban, Briefcase, GraduationCap, Trophy, LogOut,
 } from "lucide-react";
 import Projects from "@/page/Projects";
 import Contact from "@/page/Contact";
@@ -122,6 +122,7 @@ export default function MainLayout() {
                           { to: ROUTES.DASHBOARD_PROJECTS, icon: FolderKanban, label: "Projects" },
                           { to: ROUTES.DASHBOARD_EXPERIENCE, icon: Briefcase, label: "Experience" },
                           { to: ROUTES.DASHBOARD_EDUCATION, icon: GraduationCap, label: "Education" },
+                          { to: ROUTES.DASHBOARD_AWARDS, icon: Trophy, label: "Awards" },
                         ].map(({ to, icon: Icon, label }) => (
                           <Link
                             key={to}

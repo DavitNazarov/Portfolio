@@ -6,6 +6,7 @@ export const ROUTES = {
   DASHBOARD_PROJECTS: "/dashboard/projects",
   DASHBOARD_EXPERIENCE: "/dashboard/experience",
   DASHBOARD_EDUCATION: "/dashboard/education",
+  DASHBOARD_AWARDS: "/dashboard/awards",
 };
 
 // API routes (backend endpoints)
@@ -35,5 +36,12 @@ export const API_ROUTES = {
     CREATE: "/api/education/create-education",
     UPDATE: (id) => `/api/education/update-education/${id}`,
     DELETE: (id) => `/api/education/delete-education/${id}`,
+  },
+  AWARDS: {
+    PUBLIC: "/api/awards/public",
+    ALL: "/api/awards/get-all-awards",
+    CREATE: "/api/awards/create-award",
+    UPDATE: (id) => `/api/awards/update-award/${id}`,
+    DELETE: (id) => `/api/awards/delete-award/${id}`,
   },
 };

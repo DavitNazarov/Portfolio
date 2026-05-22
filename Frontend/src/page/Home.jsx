@@ -2,7 +2,7 @@ import { useMemo, useEffect, useState, useRef } from "react";
 import { motion, useMotionValue, useTransform, useSpring, useInView, animate } from "framer-motion";
 import {
   BrainCircuit, Boxes, Code2, Database, Server, ArrowUpRight,
-  Briefcase, GraduationCap,
+  Briefcase, GraduationCap, Trophy,
 } from "lucide-react";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import { apiPublic } from "@/lib/api";
@@ -70,21 +70,24 @@ export default function Home() {
   const [experiences, setExperiences] = useState([]);
   const [education, setEducation] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [awards, setAwards] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const [expRes, eduRes, projRes] = await Promise.all([
+        const [expRes, eduRes, projRes, awardsRes] = await Promise.all([
           apiPublic(API_ROUTES.EXPERIENCE.PUBLIC),
           apiPublic(API_ROUTES.EDUCATION.PUBLIC),
           apiPublic(API_ROUTES.PROJECTS.PUBLIC),
+          apiPublic(API_ROUTES.AWARDS.PUBLIC),
         ]);
         setExperiences(expRes.experiences ?? []);
         setEducation(eduRes.education ?? []);
         setProjects(projRes.projects ?? []);
+        setAwards(awardsRes.awards ?? []);
       } catch {
-        setExperiences([]); setEducation([]); setProjects([]);
+        setExperiences([]); setEducation([]); setProjects([]); setAwards([]);
       } finally {
         setLoading(false);
       }
@@ -102,8 +105,6 @@ export default function Home() {
   }, [projects]);
   const techGroups = useMemo(() => groupTechnologies(focusTech), [focusTech]);
 
-  // Letter delays: "Davit" starts at 0, "Nazarov" starts after Davit finishes
-  const letterDelay = (wordIdx, charIdx) => wordIdx * 0.38 + charIdx * 0.052;
 
   return (
     <div className="w-full">
@@ -124,20 +125,18 @@ export default function Home() {
         {/* ── Name ── */}
         <div className="text-center mb-10 relative z-10">
           {NAME.map((word, wi) => {
-            const isItalic = wi === 1; // "Nazarov" — signature italic
+            const isItalic = wi === 1;
             return (
               <div key={word} className="overflow-hidden" style={{ lineHeight: 0.92 }}>
                 {word.split("").map((char, ci) => (
                   <motion.span
                     key={`${wi}-${ci}`}
-                    className={`inline-block font-serif font-normal tracking-[-0.01em] text-foreground ${
-                      isItalic ? "italic" : ""
-                    }`}
+                    className={`inline-block font-serif font-normal tracking-[-0.01em] text-foreground${isItalic ? " italic" : ""}`}
                     style={{ fontSize: "clamp(4.5rem, 15vw, 11rem)" }}
                     initial={{ y: "110%" }}
                     animate={{ y: "0%" }}
                     transition={{
-                      delay: letterDelay(wi, ci),
+                      delay: wi * 0.38 + ci * 0.052,
                       duration: 0.95,
                       ease,
                     }}
@@ -271,6 +270,11 @@ export default function Home() {
             totalTools={focusTech.length}
             projectCount={projects.length}
           />
+        )}
+
+        {/* Awards */}
+        {!loading && awards.length > 0 && (
+          <AwardsSection awards={awards} />
         )}
       </div>
     </div>
@@ -770,6 +774,194 @@ function TechStackSkeleton() {
         ))}
       </div>
     </div>
+  );
+}
+
+/* ─────────────────── Awards Section ─────────────────── */
+
+const MEDAL_META = {
+  Gold:   { tint: "245, 197, 66",  label: "Gold"   },
+  Silver: { tint: "148, 163, 184", label: "Silver" },
+  Bronze: { tint: "194, 120, 50",  label: "Bronze" },
+};
+
+function AwardsSection({ awards }) {
+  const sectionRef = useRef(null);
+  const inView = useInView(sectionRef, { once: true, amount: 0.15 });
+
+  return (
+    <motion.section
+      ref={sectionRef}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      variants={{ show: { transition: { staggerChildren: 0.09 } } }}
+      className="relative mt-16 sm:mt-20"
+    >
+      {/* Header */}
+      <motion.div variants={fadeUp} className="mb-10 sm:mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <motion.span
+            initial={{ scaleX: 0, originX: 0 }}
+            animate={inView ? { scaleX: 1 } : {}}
+            transition={{ duration: 0.7, ease, delay: 0.1 }}
+            className="h-px w-10 bg-white/25"
+          />
+          <span className="text-[10px] font-mono tracking-[0.34em] uppercase text-muted-foreground/55">
+            Record
+          </span>
+        </div>
+
+        <motion.h3
+          variants={fadeUp}
+          className="font-extralight tracking-tight leading-[1.05] text-foreground"
+          style={{ fontSize: "clamp(1.75rem, 3.6vw, 2.75rem)" }}
+        >
+          Competition{" "}
+          <span className="font-serif italic font-normal text-white/95 relative">
+            highlights
+            <motion.span
+              initial={{ scaleX: 0, originX: 0 }}
+              animate={inView ? { scaleX: 1 } : {}}
+              transition={{ duration: 0.9, ease, delay: 0.7 }}
+              className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-white/60 via-white/30 to-transparent"
+            />
+          </span>
+          .
+        </motion.h3>
+      </motion.div>
+
+      {/* Cards */}
+      <motion.div
+        variants={{ show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } } }}
+        className="grid gap-3 sm:gap-3.5 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {awards.map((award, i) => (
+          <AwardCard key={award._id ?? i} award={award} index={i} />
+        ))}
+      </motion.div>
+    </motion.section>
+  );
+}
+
+const AWARD_TINT = "245, 197, 66";
+
+const awardCardVariant = {
+  hidden: { opacity: 0, y: 28, scale: 0.985 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.65, ease } },
+};
+
+function AwardCard({ award, index }) {
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const sx = useSpring(mx, { stiffness: 120, damping: 20, mass: 0.4 });
+  const sy = useSpring(my, { stiffness: 120, damping: 20, mass: 0.4 });
+  const spotlight = useTransform(
+    [sx, sy],
+    ([x, y]) =>
+      `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(${AWARD_TINT}, 0.18) 0%, transparent 50%)`
+  );
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - rect.left) / rect.width);
+    my.set((e.clientY - rect.top) / rect.height);
+  };
+  const handleLeave = () => { mx.set(0.5); my.set(0.5); };
+
+  return (
+    <motion.article
+      variants={awardCardVariant}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleLeave}
+      whileHover={{ y: -3, transition: { type: "spring", stiffness: 300, damping: 24 } }}
+      className="group relative overflow-hidden rounded-[1.4rem] border backdrop-blur-[2px] p-5 sm:p-6"
+      style={{
+        borderColor: `rgba(${AWARD_TINT}, 0.18)`,
+        background: `linear-gradient(150deg, rgba(${AWARD_TINT}, 0.09) 0%, rgba(255,255,255,0.02) 45%, rgba(0,0,0,0.18) 100%)`,
+      }}
+    >
+      {/* Mouse spotlight */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{ background: spotlight }}
+      />
+
+      {/* Top hairline */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-0 right-0 top-0 h-px"
+        style={{
+          background: `linear-gradient(90deg, transparent 0%, rgba(${AWARD_TINT}, 0.5) 50%, transparent 100%)`,
+        }}
+      />
+
+      <div className="relative flex h-full flex-col">
+        {/* Icon + index */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="relative shrink-0">
+            <div
+              aria-hidden
+              className="absolute inset-0 rounded-2xl blur-xl opacity-55 transition-opacity duration-500 group-hover:opacity-90"
+              style={{ background: `rgba(${AWARD_TINT}, 0.35)` }}
+            />
+            <div
+              className="relative flex h-10 w-10 items-center justify-center rounded-2xl border"
+              style={{
+                borderColor: `rgba(${AWARD_TINT}, 0.28)`,
+                backgroundColor: `rgba(${AWARD_TINT}, 0.14)`,
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+              }}
+            >
+              <Trophy className="h-4 w-4" style={{ color: `rgb(${AWARD_TINT})` }} />
+            </div>
+          </div>
+          <span
+            className="text-[10px] font-mono uppercase tracking-[0.24em] mt-1"
+            style={{ color: `rgba(${AWARD_TINT}, 0.5)` }}
+          >
+            {String(index + 1).padStart(2, "0")}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h4 className="text-[15px] sm:text-base font-medium text-foreground/95 leading-snug">
+          {award.title}
+        </h4>
+
+        {/* Category */}
+        <p className="mt-1 text-[13px] text-muted-foreground/60 leading-snug">
+          {award.category}
+        </p>
+
+        {/* Medal chips */}
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {(award.medals ?? []).map((medal) => {
+            const meta = MEDAL_META[medal] ?? { tint: "148, 163, 184", label: medal };
+            return (
+              <span
+                key={medal}
+                className="inline-flex items-center rounded-full border px-2.5 py-1 text-[11.5px] font-medium"
+                style={{
+                  borderColor: `rgba(${meta.tint}, 0.35)`,
+                  backgroundColor: `rgba(${meta.tint}, 0.12)`,
+                  color: `rgb(${meta.tint})`,
+                }}
+              >
+                {meta.label}
+              </span>
+            );
+          })}
+        </div>
+
+        {/* Period */}
+        {award.period && (
+          <p className="mt-auto pt-4 text-[11px] font-mono text-muted-foreground/45 tracking-wide tabular-nums">
+            {award.period}
+          </p>
+        )}
+      </div>
+    </motion.article>
   );
 }
 

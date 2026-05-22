@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
-import { FolderKanban, Briefcase, GraduationCap, ArrowLeft, LayoutDashboard } from "lucide-react";
+import { FolderKanban, Briefcase, GraduationCap, Trophy, ArrowLeft, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const cards = [
@@ -24,6 +24,13 @@ const cards = [
     description: "Degrees and institutions",
     icon: GraduationCap,
     accent: "from-chart-5/20 to-chart-4/10",
+  },
+  {
+    to: ROUTES.DASHBOARD_AWARDS,
+    title: "Awards",
+    description: "Competition results and achievements",
+    icon: Trophy,
+    accent: "from-yellow-500/20 to-orange-400/10",
   },
 ];
 
