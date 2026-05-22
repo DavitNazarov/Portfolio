@@ -75,14 +75,15 @@ function wrapShell(title: string, accent: string, bodyHtml: string) {
 </body></html>`;
 }
 
-async function send(options: { subject: string; html: string; text: string }) {
+async function send(options: { subject: string; html: string; text: string; to?: string[]; replyTo?: string }) {
   const resend = getClient();
   if (!resend) return { skipped: true as const };
 
   try {
     const result = await resend.emails.send({
       from: config.notifyFrom,
-      to: [config.notifyEmail],
+      to: options.to ?? [config.notifyEmail],
+      ...(options.replyTo ? { replyTo: options.replyTo } : {}),
       subject: options.subject,
       html: options.html,
       text: options.text,
@@ -147,6 +148,78 @@ export async function sendChatNotification(meta: ChatMeta) {
     .join("\n");
 
   return send({ subject, html, text });
+}
+
+export type ContactSubmission = VisitorMeta & {
+  name: string;
+  phone: string;
+  email: string;
+  comment: string;
+};
+
+export async function sendContactSubmission(submission: ContactSubmission) {
+  const accent = "#a78bfa";
+  const ownerSubject = `Portfolio contact · ${submission.name}`;
+  const contactRows = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #1f2027;border-radius:10px;background:#0f0f14;margin:0 0 14px 0;">
+    <tr><td style="padding:6px 12px;color:#9aa0a6;font:500 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;">Name</td><td style="padding:6px 12px;color:#e7e9ee;font:400 13px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${escapeHtml(submission.name)}</td></tr>
+    <tr><td style="padding:6px 12px;color:#9aa0a6;font:500 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;">Phone</td><td style="padding:6px 12px;color:#e7e9ee;font:400 13px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${escapeHtml(submission.phone)}</td></tr>
+    <tr><td style="padding:6px 12px;color:#9aa0a6;font:500 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;">Email</td><td style="padding:6px 12px;color:#e7e9ee;font:400 13px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;word-break:break-word;">${escapeHtml(submission.email)}</td></tr>
+  </table>`;
+  const comment = `<blockquote style="margin:0 0 14px 0;padding:12px 14px;border-left:3px solid ${accent};background:#0f0f14;border-radius:6px;color:#e7e9ee;font:400 14px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:pre-wrap;">${escapeHtml(submission.comment)}</blockquote>`;
+  const metaTable = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #1f2027;border-radius:10px;background:#0f0f14;">${metaRows(submission)}</table>`;
+  const ownerHtml = wrapShell("New contact message", accent, contactRows + comment + metaTable);
+  const ownerText = [
+    "New portfolio contact message.",
+    "",
+    `Name: ${submission.name}`,
+    `Phone: ${submission.phone}`,
+    `Email: ${submission.email}`,
+    "",
+    submission.comment,
+    "",
+    `When: ${new Date().toISOString()}`,
+    submission.ip && `IP: ${submission.ip}`,
+    submission.path && `Path: ${submission.path}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const userSubject = "Copy of your message to Davit Nazarov";
+  const userHtml = wrapShell(
+    "Message received",
+    accent,
+    `<p style="margin:0 0 14px 0;color:#c9cbd1;font:400 14px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">Hi ${escapeHtml(submission.name)}, thanks for reaching out. This is a copy of the message you sent through the portfolio contact form.</p>` +
+      contactRows +
+      comment
+  );
+  const userText = [
+    `Hi ${submission.name}, thanks for reaching out.`,
+    "This is a copy of the message you sent through the portfolio contact form.",
+    "",
+    `Name: ${submission.name}`,
+    `Phone: ${submission.phone}`,
+    `Email: ${submission.email}`,
+    "",
+    submission.comment,
+  ].join("\n");
+
+  const owner = await send({
+    subject: ownerSubject,
+    html: ownerHtml,
+    text: ownerText,
+    replyTo: submission.email,
+  });
+  if ("skipped" in owner || ("ok" in owner && !owner.ok)) return owner;
+
+  const user = await send({
+    subject: userSubject,
+    html: userHtml,
+    text: userText,
+    to: [submission.email],
+  });
+  if ("skipped" in user || ("ok" in user && !user.ok)) return user;
+
+  return { ok: true as const };
 }
 
 export function isMailerConfigured() {

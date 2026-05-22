@@ -70,7 +70,7 @@ const experiences = [
   {
     role: "Junior Front-End Developer",
     company: "SoftGen Group",
-    period: "January 2026 – Present",
+    period: "January 2026 – March 2026",
     description:
       "Built and maintained responsive React.js UIs, improving load time and UX across multiple client projects. Integrated Context API and Redux for seamless data flow between designer and back-end engineer. Translated Figma mockups into pixel-perfect, accessible components with performance optimisations (code splitting, lazy loading, memoisation). Reduced bundle size through refactoring and tree shaking; participated in code reviews and Git-based workflows.",
     tech: ["React.js", "Redux", "Context API", "Figma", "Git"],

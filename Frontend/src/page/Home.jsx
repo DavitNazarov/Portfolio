@@ -7,7 +7,7 @@ import {
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import { apiPublic } from "@/lib/api";
 import { API_ROUTES } from "@/constants/routes";
-import { sortByYear } from "@/lib/utils";
+import { isCurrentPeriod, sortByLatestPeriod } from "@/lib/utils";
 
 const ease = [0.16, 1, 0.3, 1];
 const NAME = ["Davit", "Nazarov"];
@@ -94,11 +94,14 @@ export default function Home() {
     })();
   }, []);
 
-  const currentWork = useMemo(() => sortByYear(experiences)[0], [experiences]);
+  const sortedWork = useMemo(() => sortByLatestPeriod(experiences), [experiences]);
+  const highlightedWork = useMemo(() => sortedWork[0], [sortedWork]);
+  const workIsCurrent = Boolean(highlightedWork && isCurrentPeriod(highlightedWork.period));
   const currentEdu = useMemo(() => {
-    const s = sortByYear(education);
-    return s.find((e) => e.present) ?? s[0];
+    const s = sortByLatestPeriod(education);
+    return s.find((e) => isCurrentPeriod(e.period)) ?? s[0];
   }, [education]);
+  const eduIsCurrent = Boolean(currentEdu && isCurrentPeriod(currentEdu.period));
   const focusTech = useMemo(() => {
     const all = projects.flatMap((p) => Array.isArray(p.technologies) ? p.technologies : []);
     return [...new Set(all.map((t) => (typeof t === "string" ? t.trim() : String(t))).filter(Boolean))];
@@ -166,13 +169,20 @@ export default function Home() {
         >
           {loading ? (
             <div className="h-4 w-52 bg-white/8 rounded-full animate-pulse" />
-          ) : currentWork ? (
+          ) : highlightedWork ? (
             <>
-              <span className="relative flex h-1.5 w-1.5 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
-                <span className="relative flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              {workIsCurrent ? (
+                <span className="relative flex h-1.5 w-1.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+                  <span className="relative flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                </span>
+              ) : (
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/25" />
+              )}
+              <span className="text-muted-foreground/45 font-mono text-[10px] uppercase tracking-[0.22em]">
+                {workIsCurrent ? "Current" : "Last role"}
               </span>
-              <span className="text-foreground/80 font-light tracking-wide">{currentWork.role}</span>
+              <span className="text-foreground/80 font-light tracking-wide">{highlightedWork.role}</span>
             </>
           ) : null}
         </motion.div>
@@ -226,27 +236,27 @@ export default function Home() {
           variants={{ show: { transition: { staggerChildren: 0.12 } } }}
         >
           <HeroInfoCard
-            eyebrow="Currently"
+            eyebrow={workIsCurrent ? "Currently" : "Last role"}
             tint="251, 191, 36"
             icon={Briefcase}
             loading={loading}
-            title={currentWork?.role}
-            subtitle={currentWork?.company}
-            period={currentWork?.period}
-            isLive={Boolean(currentWork?.present)}
+            title={highlightedWork?.role}
+            subtitle={highlightedWork?.company}
+            period={highlightedWork?.period}
+            isLive={workIsCurrent}
             jumpTo="experience"
             emptyLabel="Between engagements"
           />
 
           <HeroInfoCard
-            eyebrow="Education"
+            eyebrow={eduIsCurrent ? "Current study" : "Last study"}
             tint="52, 211, 153"
             icon={GraduationCap}
             loading={loading}
             title={currentEdu?.degree}
             subtitle={currentEdu?.institution}
             period={currentEdu?.period}
-            isLive={Boolean(currentEdu?.present)}
+            isLive={eduIsCurrent}
             jumpTo="education"
             emptyLabel="Self-directed study"
           />

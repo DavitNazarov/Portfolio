@@ -1,7 +1,6 @@
 import { Plus, Pencil, Trash2, Loader2, Briefcase } from "lucide-react";
 import { API_ROUTES } from "@/constants/routes";
-import { cn } from "@/lib/utils";
-import { parseCommaList } from "@/lib/utils";
+import { cn, isCurrentPeriod, parseCommaList } from "@/lib/utils";
 import { useDashboardList } from "@/hooks/useDashboardList";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Modal } from "@/components/dashboard/Modal";
@@ -92,11 +91,14 @@ export default function DashboardExperience() {
           </div>
           <FormField
             label="Period"
-            placeholder="2020 – 2023"
+            placeholder="Jan 2025 – Mar 2026 or Jan 2026 – Present"
             value={form.period}
             onChange={(v) => setForm((f) => ({ ...f, period: v }))}
             required
           />
+          <p className="-mt-2 text-xs text-muted-foreground/60">
+            Add “Present” to mark this as the current role.
+          </p>
           <FormField
             label="Description"
             placeholder="What you did there"
@@ -157,6 +159,9 @@ export default function DashboardExperience() {
                 <span className="text-foreground">{e.company}</span>
                 {e.period && (
                   <span className="ml-2 text-xs text-muted-foreground font-mono">({e.period})</span>
+                )}
+                {isCurrentPeriod(e.period) && (
+                  <span className="ml-2 text-xs text-muted-foreground italic">current</span>
                 )}
               </div>
               <div className="flex items-center gap-2 shrink-0">

@@ -5,13 +5,13 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import { useFetchData } from "@/hooks/useFetchData";
 import { API_ROUTES } from "@/constants/routes";
-import { sortByYear } from "@/lib/utils";
+import { isCurrentPeriod, sortByLatestPeriod } from "@/lib/utils";
 
 const TINT = "251, 191, 36";
 
 export default function Experience() {
   const { data: experiences, loading } = useFetchData(API_ROUTES.EXPERIENCE.PUBLIC, "experiences");
-  const sorted = useMemo(() => sortByYear(experiences), [experiences]);
+  const sorted = useMemo(() => sortByLatestPeriod(experiences), [experiences]);
 
   return (
     <div className="w-full max-w-4xl">
@@ -43,7 +43,7 @@ export default function Experience() {
 
 function ExperienceCard({ exp, index, total }) {
   const tech = Array.isArray(exp.tech) ? exp.tech : [];
-  const isCurrent = Boolean(exp.present);
+  const isCurrent = isCurrentPeriod(exp.period);
 
   return (
     <SpotlightCard tint={TINT} delay={index * 0.08} className="p-5 sm:p-7">

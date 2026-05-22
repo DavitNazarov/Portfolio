@@ -5,13 +5,13 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import { useFetchData } from "@/hooks/useFetchData";
 import { API_ROUTES } from "@/constants/routes";
-import { sortByYear } from "@/lib/utils";
+import { isCurrentPeriod, sortByLatestPeriod } from "@/lib/utils";
 
 const TINT = "52, 211, 153";
 
 export default function Education() {
   const { data: education, loading } = useFetchData(API_ROUTES.EDUCATION.PUBLIC, "education");
-  const sorted = useMemo(() => sortByYear(education), [education]);
+  const sorted = useMemo(() => sortByLatestPeriod(education), [education]);
 
   return (
     <div className="w-full max-w-4xl">
@@ -41,6 +41,8 @@ export default function Education() {
 }
 
 function EducationCard({ edu, index }) {
+  const isCurrent = isCurrentPeriod(edu.period);
+
   return (
     <SpotlightCard tint={TINT} delay={index * 0.07} className="p-5 sm:p-6 flex flex-col h-full">
       <div className="flex flex-1 flex-col gap-4">
@@ -63,7 +65,7 @@ function EducationCard({ edu, index }) {
             </div>
           </div>
 
-          {edu.present && (
+          {isCurrent && (
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}

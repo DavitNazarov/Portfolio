@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$!&*?—+";
 
@@ -25,7 +25,7 @@ export default function ScrambleText({
   className = "",
   style,
 }) {
-  const letters = Array.from(text);
+  const letters = useMemo(() => Array.from(text), [text]);
 
   const [chars, setChars] = useState(() =>
     letters.map((c) => (c === " " ? " " : random()))
@@ -77,7 +77,7 @@ export default function ScrambleText({
       clearTimeout(timerRef.current);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [text, delay, resolveSpeed, scrambleSpeed]);
+  }, [text, letters, delay, resolveSpeed, scrambleSpeed]);
 
   return (
     <span className={className} style={style} aria-label={text}>

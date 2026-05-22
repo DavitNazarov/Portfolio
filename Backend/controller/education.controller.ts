@@ -4,10 +4,14 @@ import { IEducation } from "../types/educationTypes.js";
 import { isDbConnectionError } from "../lib/dbError.js";
 import * as r from "../lib/response.js";
 
-const REQUIRED = ["degree", "institution", "period", "description", "present"] as const;
+const REQUIRED = ["degree", "institution", "period", "description"] as const;
 
 function hasAll(body: Record<string, unknown>): body is Record<(typeof REQUIRED)[number], unknown> {
   return REQUIRED.every((k) => body[k] != null);
+}
+
+function periodIsCurrent(period: unknown) {
+  return /\b(present|current|now|ongoing)\b/i.test(String(period ?? ""));
 }
 
 export async function getAllEducation(req: Request, res: Response) {
@@ -23,12 +27,12 @@ export async function getAllEducation(req: Request, res: Response) {
 export async function createEducation(req: Request, res: Response) {
   try {
     if (!hasAll(req.body)) return r.badRequest(res, "All fields are required");
-    const { degree, institution, period, description, present } = req.body;
+    const { degree, institution, period, description } = req.body;
 
     const existing = await Education.findOne({ degree, institution, period });
     if (existing) return r.badRequest(res, `Education: ${degree} at ${institution}, already exists`);
 
-    await Education.create({ degree, institution, period, description, present });
+    await Education.create({ degree, institution, period, description, present: periodIsCurrent(period) });
     return r.sendSuccess(res, 201, `Education: ${degree} at ${institution}, created successfully`);
   } catch (error) {
     console.error("Error creating education", error);
@@ -42,13 +46,15 @@ export async function updateEducation(req: Request, res: Response) {
     if (!id) return r.badRequest(res, "Education ID is required");
     if (!hasAll(req.body)) return r.badRequest(res, "All fields are required");
 
-    const { degree, institution, period, description, present } = req.body;
+    const { degree, institution, period, description } = req.body;
     const updateData: Partial<IEducation> = {};
     if (degree != null) updateData.degree = String(degree);
     if (institution != null) updateData.institution = String(institution);
-    if (period != null) updateData.period = String(period);
+    if (period != null) {
+      updateData.period = String(period);
+      updateData.present = periodIsCurrent(period);
+    }
     if (description != null) updateData.description = String(description);
-    if (present != null) updateData.present = Boolean(present);
 
     const education = await Education.findByIdAndUpdate(id, updateData, { new: true });
     if (!education) return r.notFound(res, "Education is not found");

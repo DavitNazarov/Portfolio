@@ -80,9 +80,9 @@ export async function api(path, options = {}) {
   return request(path, options, true);
 }
 
-/** Public API request (no auth). Use for portfolio pages. */
-export async function apiPublic(path) {
-  return request(path, { method: "GET" }, false);
+/** Public API request (no auth). Use for portfolio pages and public forms. */
+export async function apiPublic(path, options = {}) {
+  return request(path, { method: "GET", ...options }, false);
 }
 
 export function setToken(token, role) {

@@ -16,7 +16,7 @@ export default function Projects() {
   return (
     <div className="w-full max-w-4xl">
       <SectionHeader
-        number="04"
+        number="05"
         eyebrow="Projects"
         title="Things I've"
         accent="built"
@@ -130,6 +130,18 @@ function ProjectCard({ project, index, total }) {
           </p>
         )}
 
+        <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] px-3.5 py-3">
+          <p
+            className="text-[10px] font-mono uppercase tracking-[0.22em]"
+            style={{ color: `rgba(${TINT}, 0.75)` }}
+          >
+            My part
+          </p>
+          <p className="mt-1.5 text-[13px] leading-6 text-muted-foreground/68">
+            {personalContribution(project)}
+          </p>
+        </div>
+
         {/* Tech chips */}
         {tech.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
@@ -154,6 +166,21 @@ function ProjectCard({ project, index, total }) {
       </div>
     </SpotlightCard>
   );
+}
+
+function personalContribution(project) {
+  const name = String(project.name ?? "").toLowerCase();
+  if (name.includes("movie")) {
+    return "Built the React interface, connected API-driven movie data, handled auth-facing flows, and shaped the AI movie-chat experience around real user actions. Also, movies are free to watch for everyone in high quality.";
+  }
+  if (name.includes("wushu")) {
+    return "Designed and implemented the competition-management product flow, from structured tournament data to responsive admin and live-operation screens.";
+  }
+  if (name.includes("portfolio")) {
+    return "Built the full-stack portfolio, public API-backed sections, protected dashboard CRUD, notification email flow, and deployment setup.";
+  }
+
+  return "Owned the implementation details shown here: interface structure, API integration, state handling, and final polish.";
 }
 
 function SkeletonCard() {

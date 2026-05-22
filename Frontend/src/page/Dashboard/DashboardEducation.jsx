@@ -1,12 +1,12 @@
 import { Plus, Pencil, Trash2, Loader2, GraduationCap } from "lucide-react";
 import { API_ROUTES } from "@/constants/routes";
-import { cn } from "@/lib/utils";
+import { cn, isCurrentPeriod } from "@/lib/utils";
 import { useDashboardList } from "@/hooks/useDashboardList";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Modal } from "@/components/dashboard/Modal";
 import { INPUT_CLASS_SM } from "@/constants/ui";
 
-const EMPTY_EDU = { degree: "", institution: "", period: "", description: "", present: false };
+const EMPTY_EDU = { degree: "", institution: "", period: "", description: "" };
 
 function formFromEducation(e) {
   return {
@@ -14,17 +14,17 @@ function formFromEducation(e) {
     institution: e.institution,
     period: e.period,
     description: e.description,
-    present: !!e.present,
   };
 }
 
 function buildPayload(form) {
+  const period = form.period.trim();
   return {
     degree: form.degree.trim(),
     institution: form.institution.trim(),
-    period: form.period.trim(),
+    period,
     description: form.description.trim(),
-    present: !!form.present,
+    present: isCurrentPeriod(period),
   };
 }
 
@@ -108,6 +108,9 @@ export default function DashboardEducation() {
               onChange={(e) => setForm((f) => ({ ...f, period: e.target.value }))}
               required
             />
+            <span className="block text-xs text-muted-foreground/60">
+              Add “Present” to mark this as current.
+            </span>
           </label>
           <label className="block space-y-1.5">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Description</span>
@@ -119,15 +122,6 @@ export default function DashboardEducation() {
               rows={2}
               required
             />
-          </label>
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.present}
-              onChange={(e) => setForm((f) => ({ ...f, present: e.target.checked }))}
-              className="w-4 h-4 rounded border-border text-foreground focus:ring-ring"
-            />
-            <span className="text-sm text-muted-foreground">Currently studying here</span>
           </label>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex gap-3 pt-2">
@@ -183,7 +177,7 @@ export default function DashboardEducation() {
                 {e.period && (
                   <span className="ml-2 text-xs text-muted-foreground font-mono">({e.period})</span>
                 )}
-                {e.present && (
+                {isCurrentPeriod(e.period) && (
                   <span className="ml-2 text-xs text-muted-foreground italic">current</span>
                 )}
               </div>

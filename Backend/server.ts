@@ -11,6 +11,7 @@ import experienceRouter from "./routes/experience.routes.js";
 import educationRouter from "./routes/education.routes.js";
 import awardRouter from "./routes/award.routes.js";
 import notifyRouter from "./routes/notify.routes.js";
+import aiRouter from "./routes/ai.routes.js";
 import * as r from "./lib/response.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -66,6 +67,7 @@ app.use("/api/projects", projectsRouter);
 app.use("/api/experience", experienceRouter);
 app.use("/api/education", educationRouter);
 app.use("/api/awards", awardRouter);
+app.use("/api/ai", aiRouter);
 
 // Serve frontend (Vite build) and SPA fallback
 app.use(express.static(publicDir));

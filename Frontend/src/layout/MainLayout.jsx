@@ -12,6 +12,7 @@ import Projects from "@/page/Projects";
 import Contact from "@/page/Contact";
 import Experience from "@/page/Experience";
 import Education from "@/page/Education";
+import HowIWork from "@/page/HowIWork";
 import { useAuth } from "@/context/AuthContext";
 import { ROUTES } from "@/constants/routes";
 
@@ -19,8 +20,9 @@ const SECTIONS = [
   { id: "home", label: "Intro", number: "01" },
   { id: "experience", label: "Work", number: "02" },
   { id: "education", label: "Study", number: "03" },
-  { id: "projects", label: "Build", number: "04" },
-  { id: "contact", label: "Connect", number: "05" },
+  { id: "process", label: "Process", number: "04" },
+  { id: "projects", label: "Build", number: "05" },
+  { id: "contact", label: "Connect", number: "06" },
 ];
 
 export default function MainLayout() {
@@ -268,6 +270,10 @@ export default function MainLayout() {
 
             <section id="education" className="min-h-screen py-28 sm:py-36 flex items-center justify-center px-6 sm:px-10 lg:px-16">
               <Education />
+            </section>
+
+            <section id="process" className="min-h-screen py-28 sm:py-36 flex items-center justify-center px-6 sm:px-10 lg:px-16">
+              <HowIWork />
             </section>
 
             <section id="projects" className="min-h-screen py-28 sm:py-36 flex items-center justify-center px-6 sm:px-10 lg:px-16">

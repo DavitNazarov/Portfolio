@@ -1,114 +1,183 @@
-# Portfolio
+# Davit Nazarov Portfolio
 
-A full-stack portfolio website with a public-facing site and a protected dashboard to manage content. All displayed content (experience, education, projects, skills) is loaded from the API.
+Full-stack portfolio landing page built for the test task: frontend presentation, API-backed content, contact form, email delivery, and a lightweight portfolio helper.
 
-## Tech Stack
+## Links
 
-- **Frontend:** React 19, Vite 7, Tailwind CSS 4, Framer Motion, React Router
-- **Backend:** Node.js, Express, TypeScript
-- **Database:** MongoDB (Mongoose)
+- GitHub: https://github.com/DavitNazarov/Portfolio
+- Deploy: https://portfolio-m12j.onrender.com
 
-## Project Structure
+## Stack
 
+- Frontend: React 19, Vite 7, Tailwind CSS 4, Framer Motion, Lucide Icons
+- Backend/API: Node.js, Express, TypeScript
+- Database: MongoDB with Mongoose
+- Email: Resend
+- Deployment: Render
+
+## What Is Implemented
+
+- Public portfolio sections: intro, experience, education, working process, projects, awards, contact
+- Backend API for projects, experience, education, awards, auth, notifications, AI chat, and contact form
+- Protected dashboard for managing portfolio content
+- Required feedback form with name, phone, email, and comment
+- Loading, success, and error states for API-driven UI and the contact form
+- Email flow: owner receives the message and the sender receives a copy
+- Atlas AI portfolio helper: OpenRouter-powered chat using live MongoDB portfolio data, with a local fallback if the AI service is unavailable
+
+## Contact Form
+
+The contact form posts to:
+
+```txt
+POST /api/notify/contact
 ```
-Portfolio/
-├── Frontend/          # React SPA (Vite)
-│   └── src/
-│       ├── page/      # Home, Experience, Education, Projects, Contact, Auth, Dashboard
-│       ├── layout/    # MainLayout
-│       ├── context/   # AuthContext
-│       ├── lib/       # api, utils
-│       └── constants/ # routes, etc.
-├── Backend/           # Express API
-│   ├── controller/    # auth, projects, experience, education
-│   ├── model/         # User, Projects, Experience, Education
-│   ├── routes/        # auth, projects, experience, education
-│   ├── middleware/    # auth (JWT)
-│   └── server.ts
-└── package.json       # Root scripts (runs both apps)
+
+Payload:
+
+```json
+{
+  "name": "Visitor name",
+  "phone": "+995 ...",
+  "email": "visitor@example.com",
+  "comment": "Message text"
+}
 ```
 
-## Features
+Backend behavior:
 
-- **Public pages:** Home, Experience, Education, Projects, Contact — all data from API
-- **Auth:** Login with JWT; unauthorized users cannot access the dashboard or see the dashboard dropdown
-- **Dashboard (protected):** Manage Projects, Experience, and Education (CRUD)
-- **Home:** Current role & company, education, and focus (unique tech from projects) — all from API
+- validates required fields
+- validates email format
+- limits phone/comment length
+- rate-limits submissions per IP
+- sends the full message to `NOTIFY_EMAIL`
+- sends a confirmation copy to the submitted email address
+- returns clear error responses if validation fails or the mailer is not configured
+- email delivery uses Resend; before domain verification, Resend can deliver only to the verified owner email, `nazarov.davit17@gmail.com`
 
-## API Endpoints
+## AI Usage
 
-| Area        | Public (GET)           | Protected (auth required)                    |
-|------------|------------------------|----------------------------------------------|
-| Auth       | —                      | `POST /api/auth/login`                       |
-| Projects   | `GET /api/projects/public` | Create, update, delete, get-all             |
-| Experience | `GET /api/experience/public` | Create, update, delete, get-all         |
-| Education  | `GET /api/education/public` | Create, update, delete                   |
+This project uses AI in two ways:
 
-## Setup
+- Product feature: Atlas, an on-site portfolio helper powered by OpenRouter model `google/gemma-4-26b-a4b-it:free`. The backend builds the assistant context from the current MongoDB projects, experience, education, and awards data, so dashboard changes update what Atlas knows.
+- Development workflow: AI was used mainly as a frontend UI/UX pair-programming tool. Before coding, I prepared the project context, API contracts, existing components, styling rules, and exact instructions for what the screen should do. Then I used AI to help implement layouts, component structure, responsive states, micro-interactions, and interface copy.
 
-### Prerequisites
+What was checked or fixed manually:
 
-- Node.js (v18+)
-- MongoDB (local or Atlas)
+- API contracts and validation behavior
+- form loading/success/error states
+- Resend owner/user email flow
+- responsive layout and visual consistency
+- AI-generated frontend code was reviewed, simplified, and cleaned manually
+- TypeScript build errors
+- stale README content and inaccurate claims
 
-### Environment
+## Environment Variables
 
-**Backend** (`Backend/.env`):
+Backend (`Backend/.env` locally or Render environment):
 
-- `PORT` — server port (e.g. `5000`)
-- `MONGO_URI` — MongoDB connection string
-- `JWT_SECRET` — secret for signing JWTs
+```txt
+PORT=3000
+MONGO_URI=mongodb+srv://...
+JWT_SECRET=your-secret
+RESEND_API_KEY=re_...
+NOTIFY_EMAIL=owner@example.com
+NOTIFY_FROM=Portfolio <onboarding@resend.dev>
+OPENROUTER_API_KEY=sk-or-...
+OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
+OPENROUTER_SITE_URL=https://your-deploy-url
+OPENROUTER_APP_NAME=Davit Nazarov Portfolio
+FRONTEND_URL=https://your-deploy-url
+```
 
-**Frontend** (optional):
+Notes:
 
-- `VITE_API_URL` — base URL for the API (e.g. `http://localhost:5000`). Omit for same-origin.
+- `MONGO_URI` is required for portfolio data and dashboard CRUD.
+- `RESEND_API_KEY`, `NOTIFY_EMAIL`, and `NOTIFY_FROM` are required for the contact form email flow.
+- Resend test mode only sends to the verified account email, `nazarov.davit17@gmail.com`. To send user copies to any visitor, verify a sending domain in Resend and use a `NOTIFY_FROM` address on that domain.
+- `OPENROUTER_API_KEY` is required for Atlas AI answers. `OPENROUTER_MODEL` defaults to `google/gemma-4-26b-a4b-it:free`.
+- In local frontend development, leave `VITE_API_URL` unset to use the Vite proxy, or set it to the backend URL if running separately.
 
-### Install & Run
+## Run Locally
+
+Install root dependencies:
 
 ```bash
-# Install root deps (concurrently)
 npm install
+```
 
-# Run frontend and backend together
+Run frontend and backend together:
+
+```bash
 npm run dev
 ```
 
-Or run separately:
+Run separately:
 
 ```bash
-npm run dev:frontend   # Frontend only (Vite)
-npm run dev:backend    # Backend only (Express)
+npm run dev:frontend
+npm run dev:backend
 ```
 
-- Frontend: typically `http://localhost:5173`
-- Backend: `http://localhost:5000` (or your `PORT`)
+Typical local URLs:
 
-## Scripts (root)
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
 
-| Script         | Description                    |
-|----------------|--------------------------------|
-| `npm run dev`  | Start Frontend + Backend       |
-| `npm run dev:frontend` | Start Frontend only   |
-| `npm run dev:backend`  | Start Backend only    |
-| `npm run build`        | Build Backend, output to `dist` |
-| `npm run start`        | Run built Backend             |
+## Build And Check
 
-## Deploy on Render (Backend + MongoDB Atlas)
+```bash
+npm run build --prefix Backend
+npm run build --prefix Frontend
+npm run lint --prefix Frontend
+```
 
-1. **Environment variables** (Render → Service → Environment):
-   - `MONGO_URI` — your Atlas connection string (e.g. `mongodb+srv://user:pass@cluster.mongodb.net/portfolio?retryWrites=true&w=majority`)
-   - `JWT_SECRET` — secret for JWT (any long random string)
-   - `PORT` — set by Render automatically; no need to add it
+Root production build:
 
-2. **MongoDB Atlas Network Access** (required for Render to reach Atlas):
-   - Atlas → Network Access → Add IP Address
-   - Add **`0.0.0.0/0`** (Allow access from anywhere) so Render’s outbound IPs can connect  
-   - Without this you’ll see `MongoServerSelectionError` or TLS/SSL errors on deploy
+```bash
+npm run build
+```
 
-3. **Connection string**: If the password contains `@`, `#`, `:`, etc., [URL-encode](https://www.urlencoder.org/) it in the URI.
+## Deploy Notes
 
-4. **Build & start**: Use build command `npm install; npm run build` and start command `npm run start` (root). The backend uses Mongoose only and connects with timeouts suitable for Atlas.
+Render uses:
 
-## License
+```bash
+npm install && npm run build
+npm start
+```
 
-Private / portfolio use.
+Set these Render environment variables before testing the contact form:
+
+- `MONGO_URI`
+- `JWT_SECRET`
+- `RESEND_API_KEY`
+- `NOTIFY_EMAIL`
+- `NOTIFY_FROM`
+- `OPENROUTER_API_KEY`
+- `OPENROUTER_MODEL`
+- `OPENROUTER_SITE_URL`
+- `OPENROUTER_APP_NAME`
+
+## Project Structure
+
+```txt
+Portfolio/
+├── Backend/
+│   ├── controller/
+│   ├── lib/
+│   ├── middleware/
+│   ├── model/
+│   ├── routes/
+│   └── server.ts
+├── Frontend/
+│   └── src/
+│       ├── components/
+│       ├── constants/
+│       ├── hooks/
+│       ├── layout/
+│       ├── lib/
+│       └── page/
+├── package.json
+└── render.yaml
+```

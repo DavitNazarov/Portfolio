@@ -11,3 +11,17 @@ services:
         sync: false
       - key: JWT_SECRET
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: NOTIFY_EMAIL
+        sync: false
+      - key: NOTIFY_FROM
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: google/gemma-4-26b-a4b-it:free
+      - key: OPENROUTER_SITE_URL
+        sync: false
+      - key: OPENROUTER_APP_NAME
+        value: Davit Nazarov Portfolio
