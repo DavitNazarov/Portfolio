@@ -6,7 +6,11 @@ import * as r from "../lib/response.js";
 
 const REQUIRED = ["title", "medals", "category"] as const;
 
-function hasAll(body: Record<string, unknown>): body is Record<(typeof REQUIRED)[number], unknown> {
+type AwardBody = Record<(typeof REQUIRED)[number], unknown> & {
+  period?: unknown;
+};
+
+function hasAll(body: Record<string, unknown>): body is AwardBody {
   return REQUIRED.every((k) => body[k] != null && (Array.isArray(body[k]) ? (body[k] as unknown[]).length > 0 : true));
 }
 
