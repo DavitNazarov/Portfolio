@@ -1,33 +1,33 @@
-import { Request, Response } from "express";
-import { Education } from "../model/education.model.js";
+import type { Request, Response } from "express";
+import {
+  bodyRecord,
+  handleControllerError,
+  hasRequiredFields,
+  pickDefined,
+  requestId,
+} from "../lib/controller.js";
+import { periodIsCurrent } from "../lib/period.js";
 import { IEducation } from "../types/educationTypes.js";
-import { isDbConnectionError } from "../lib/dbError.js";
+import { Education } from "../model/education.model.js";
 import * as r from "../lib/response.js";
 
 const REQUIRED = ["degree", "institution", "period", "description"] as const;
-
-function hasAll(body: Record<string, unknown>): body is Record<(typeof REQUIRED)[number], unknown> {
-  return REQUIRED.every((k) => body[k] != null);
-}
-
-function periodIsCurrent(period: unknown) {
-  return /\b(present|current|now|ongoing)\b/i.test(String(period ?? ""));
-}
+type EducationUpdate = Pick<IEducation, (typeof REQUIRED)[number] | "present">;
 
 export async function getAllEducation(req: Request, res: Response) {
   try {
     const education = await Education.find();
     return r.sendSuccess(res, 200, "Education fetched successfully", { education });
   } catch (error) {
-    console.error("Error fetching education", error);
-    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
+    return handleControllerError(res, error, "Error fetching education");
   }
 }
 
 export async function createEducation(req: Request, res: Response) {
   try {
-    if (!hasAll(req.body)) return r.badRequest(res, "All fields are required");
-    const { degree, institution, period, description } = req.body;
+    const body = bodyRecord(req);
+    if (!hasRequiredFields(body, REQUIRED)) return r.badRequest(res, "All fields are required");
+    const { degree, institution, period, description } = body;
 
     const existing = await Education.findOne({ degree, institution, period });
     if (existing) return r.badRequest(res, `Education: ${degree} at ${institution}, already exists`);
@@ -35,48 +35,44 @@ export async function createEducation(req: Request, res: Response) {
     await Education.create({ degree, institution, period, description, present: periodIsCurrent(period) });
     return r.sendSuccess(res, 201, `Education: ${degree} at ${institution}, created successfully`);
   } catch (error) {
-    console.error("Error creating education", error);
-    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
+    return handleControllerError(res, error, "Error creating education");
   }
 }
 
 export async function updateEducation(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    if (!id) return r.badRequest(res, "Education ID is required");
-    if (!hasAll(req.body)) return r.badRequest(res, "All fields are required");
+    const id = requestId(req, res, "Education");
+    if (!id) return;
 
-    const { degree, institution, period, description } = req.body;
-    const updateData: Partial<IEducation> = {};
-    if (degree != null) updateData.degree = String(degree);
-    if (institution != null) updateData.institution = String(institution);
-    if (period != null) {
-      updateData.period = String(period);
-      updateData.present = periodIsCurrent(period);
-    }
-    if (description != null) updateData.description = String(description);
+    const body = bodyRecord(req);
+    if (!hasRequiredFields(body, REQUIRED)) return r.badRequest(res, "All fields are required");
+
+    const updateData = pickDefined<EducationUpdate>(body, REQUIRED);
+    updateData.degree = String(body.degree);
+    updateData.institution = String(body.institution);
+    updateData.period = String(body.period);
+    updateData.description = String(body.description);
+    updateData.present = periodIsCurrent(body.period);
 
     const education = await Education.findByIdAndUpdate(id, updateData, { new: true });
     if (!education) return r.notFound(res, "Education is not found");
 
-    return r.sendSuccess(res, 200, `Education: ${degree} at ${institution}, updated successfully`);
+    return r.sendSuccess(res, 200, `Education: ${education.degree} at ${education.institution}, updated successfully`);
   } catch (error) {
-    console.error("Error updating education", error);
-    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
+    return handleControllerError(res, error, "Error updating education");
   }
 }
 
 export async function deleteEducation(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    if (!id) return r.badRequest(res, "Education ID is required");
+    const id = requestId(req, res, "Education");
+    if (!id) return;
 
     const education = await Education.findByIdAndDelete(id);
     if (!education) return r.notFound(res, "Education is not found");
 
     return r.sendSuccess(res, 200, `Education: ${education.degree} at ${education.institution}, deleted successfully`);
   } catch (error) {
-    console.error("Error deleting education", error);
-    return isDbConnectionError(error) ? r.serviceUnavailable(res) : r.serverError(res);
+    return handleControllerError(res, error, "Error deleting education");
   }
 }

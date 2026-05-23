@@ -1,38 +1,8 @@
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
-import { FolderKanban, Briefcase, GraduationCap, Trophy, ArrowLeft, LayoutDashboard } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const cards = [
-  {
-    to: ROUTES.DASHBOARD_PROJECTS,
-    title: "Projects",
-    description: "Create, edit, and remove portfolio projects",
-    icon: FolderKanban,
-    accent: "from-chart-1/20 to-chart-2/10",
-  },
-  {
-    to: ROUTES.DASHBOARD_EXPERIENCE,
-    title: "Experience",
-    description: "Manage work history and roles",
-    icon: Briefcase,
-    accent: "from-chart-3/20 to-chart-4/10",
-  },
-  {
-    to: ROUTES.DASHBOARD_EDUCATION,
-    title: "Education",
-    description: "Degrees and institutions",
-    icon: GraduationCap,
-    accent: "from-chart-5/20 to-chart-4/10",
-  },
-  {
-    to: ROUTES.DASHBOARD_AWARDS,
-    title: "Awards",
-    description: "Competition results and achievements",
-    icon: Trophy,
-    accent: "from-yellow-500/20 to-orange-400/10",
-  },
-];
+import { ArrowLeft, LayoutDashboard } from "lucide-react";
+import DashboardHomeCard from "@/features/dashboard/components/DashboardHomeCard";
+import { DASHBOARD_CARDS } from "@/features/dashboard/config/dashboardCards";
 
 export default function Dashboard() {
   return (
@@ -61,36 +31,8 @@ export default function Dashboard() {
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         <div className="grid gap-4 sm:gap-6">
-          {cards.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={cn(
-                "group flex items-start gap-4 p-5 sm:p-6 rounded-2xl border border-border",
-                "bg-card/50 backdrop-blur-sm",
-                "hover:border-muted-foreground/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
-                "transition-all duration-300"
-              )}
-            >
-              <div
-                className={cn(
-                  "flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br shrink-0",
-                  item.accent,
-                  "group-hover:scale-105 transition-transform duration-300"
-                )}
-              >
-                <item.icon className="w-7 h-7 text-foreground" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h2 className="text-lg font-semibold text-foreground group-hover:text-foreground">
-                  {item.title}
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-              </div>
-              <span className="text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all">
-                →
-              </span>
-            </Link>
+          {DASHBOARD_CARDS.map((item) => (
+            <DashboardHomeCard key={item.to} item={item} />
           ))}
         </div>
       </div>

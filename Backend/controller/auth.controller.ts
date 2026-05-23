@@ -1,18 +1,11 @@
-import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import type { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { User } from "../model/User.model.js";
 import { config } from "../config.js";
+import { credentialsFromRequest } from "../features/auth/utils/credentials.js";
+import { createAuthToken } from "../features/auth/services/tokenService.js";
 import { resolveUserRole } from "../lib/userRole.js";
+import { User } from "../model/User.model.js";
 import * as r from "../lib/response.js";
-
-function normalizeEmail(value: unknown) {
-  return typeof value === "string" ? value.trim().toLowerCase() : "";
-}
-
-function normalizePassword(value: unknown) {
-  return typeof value === "string" ? value : "";
-}
 
 export async function register(req: Request, res: Response) {
   try {
@@ -20,8 +13,7 @@ export async function register(req: Request, res: Response) {
       return r.forbidden(res, "Public registration is disabled");
     }
 
-    const email = normalizeEmail(req.body?.email);
-    const password = normalizePassword(req.body?.password);
+    const { email, password } = credentialsFromRequest(req);
     if (!email || !password) return r.badRequest(res, "Email and password are required");
 
     const existing = await User.findOne({ email });
@@ -39,8 +31,7 @@ export async function register(req: Request, res: Response) {
 
 export async function logIn(req: Request, res: Response) {
   try {
-    const email = normalizeEmail(req.body?.email);
-    const password = normalizePassword(req.body?.password);
+    const { email, password } = credentialsFromRequest(req);
     if (!email || !password) return r.badRequest(res, "Email and password are required");
 
     const user = await User.findOne({ email });
@@ -49,16 +40,10 @@ export async function logIn(req: Request, res: Response) {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return r.unauthorized(res, "Invalid credentials, please try again");
 
-    if (!config.jwtSecret) {
-      return r.sendError(res, 500, "JWT_SECRET not configured");
-    }
-
     const role = resolveUserRole(user.role);
-    const token = jwt.sign(
-      { userId: String(user._id), role },
-      config.jwtSecret,
-      { expiresIn: "1h" }
-    );
+    const token = createAuthToken(String(user._id), role);
+    if (!token) return r.sendError(res, 500, "JWT_SECRET not configured");
+
     return res.status(200).json({ message: "Login successful", status: "success", token, role });
   } catch (error) {
     console.error("Error logging in user", error);

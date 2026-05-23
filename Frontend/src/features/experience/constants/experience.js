@@ -1,0 +1,2 @@
+export const EXPERIENCE_TINT = "251, 191, 36";
+export const EXPERIENCE_SKELETON_COUNT = 2;

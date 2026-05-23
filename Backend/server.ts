@@ -1,118 +1,16 @@
 import "dotenv/config";
-import path from "path";
-import { fileURLToPath } from "url";
-import cors from "cors";
-import express from "express";
-import mongoose from "mongoose";
+import { createApp } from "./app.js";
 import { config } from "./config.js";
-import authRouter from "./routes/auth.routes.js";
-import projectsRouter from "./routes/projects.routes.js";
-import experienceRouter from "./routes/experience.routes.js";
-import educationRouter from "./routes/education.routes.js";
-import awardRouter from "./routes/award.routes.js";
-import notifyRouter from "./routes/notify.routes.js";
-import aiRouter from "./routes/ai.routes.js";
-import * as r from "./lib/response.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const publicDir = path.join(__dirname, "..", "public");
+import { retryMongoUntilConnected } from "./db/mongoose.js";
 
 if (!config.jwtSecret) {
   console.error("JWT_SECRET is not set in .env. Login will fail.");
 }
 
-const app = express();
-const allowedOrigins = new Set(
-  config.isProduction
-    ? config.frontendUrls
-    : [...config.frontendUrls, "http://localhost:5173", "http://127.0.0.1:5173"]
-);
+const app = createApp();
 
-app.disable("x-powered-by");
-app.set("trust proxy", 1);
-
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin) return callback(null, true);
-      return callback(null, allowedOrigins.has(origin));
-    },
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: false,
-  })
-);
-app.use(express.json({ limit: "16kb" }));
-
-app.get("/health", (_req, res) => {
-  const ready = mongoose.connection.readyState === 1;
-  res.status(ready ? 200 : 503).json({
-    status: ready ? "ok" : "db_not_ready",
-    db: ready ? "connected" : "disconnected",
-  });
+app.listen(config.port, () => {
+  console.log(`Backend listening on port ${config.port}`);
 });
 
-// Notifications don't depend on MongoDB — mount before the DB gate.
-app.use("/api/notify", notifyRouter);
-
-app.use("/api", (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    return r.serviceUnavailable(res);
-  }
-  next();
-});
-
-app.use("/api/auth", authRouter);
-app.use("/api/projects", projectsRouter);
-app.use("/api/experience", experienceRouter);
-app.use("/api/education", educationRouter);
-app.use("/api/awards", awardRouter);
-app.use("/api/ai", aiRouter);
-
-// Serve frontend (Vite build) and SPA fallback
-app.use(express.static(publicDir));
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(publicDir, "index.html"));
-});
-
-const mongooseOptions = {
-  serverSelectionTimeoutMS: 15000,
-  connectTimeoutMS: 15000,
-};
-
-async function connectMongo() {
-  if (!config.mongoUri) {
-    console.error("MONGO_URI is not set. Set it in Render Environment Variables (or .env for local dev).");
-    return false;
-  }
-  try {
-    await mongoose.connect(config.mongoUri, mongooseOptions);
-    console.log("Mongoose connected to MongoDB");
-    return true;
-  } catch (err) {
-    console.error("MongoDB connection failed:", (err as Error).message);
-    console.error(">>> Add 0.0.0.0/0 in Atlas: Network Access → Add IP Address → Allow access from anywhere");
-    return false;
-  }
-}
-
-async function start() {
-  app.listen(config.port, () => {
-    console.log(`Backend listening on port ${config.port}`);
-  });
-
-  let connected = await connectMongo();
-  if (!connected) {
-    console.log(`Retrying MongoDB every ${config.retryMs / 1000}s until Atlas Network Access allows this server (0.0.0.0/0).`);
-    const id = setInterval(async () => {
-      if (mongoose.connection.readyState === 1) {
-        clearInterval(id);
-        return;
-      }
-      connected = await connectMongo();
-      if (connected) clearInterval(id);
-    }, config.retryMs);
-  }
-}
-
-start();
+void retryMongoUntilConnected();
