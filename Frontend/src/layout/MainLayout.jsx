@@ -7,11 +7,9 @@ import ScrollProgress from "@/layout/components/ScrollProgress";
 import SectionNav from "@/layout/components/SectionNav";
 import TopControls from "@/layout/components/TopControls";
 import { useActiveSection } from "@/layout/hooks/useActiveSection";
-import { usePreferredTheme } from "@/layout/hooks/usePreferredTheme";
 
 export default function MainLayout() {
   const active = useActiveSection();
-  usePreferredTheme();
 
   return (
     <>
