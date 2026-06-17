@@ -3,7 +3,7 @@ import { isMailerConfigured, sendContactSubmission } from "../../../lib/mailer.j
 import * as r from "../../../lib/response.js";
 import { parseContactBody } from "../utils/contactValidation.js";
 import { isFailedMailResult, isSkippedMailResult, mailerErrorMessage } from "../utils/mailerResult.js";
-import { requestBody, visitorMeta } from "../utils/requestMeta.js";
+import { requestBody, visitorMetaWithGeo } from "../utils/requestMeta.js";
 
 export async function contactHandler(req: Request, res: Response) {
   if (!isMailerConfigured()) {
@@ -15,7 +15,7 @@ export async function contactHandler(req: Request, res: Response) {
   if (!parsed.ok) return r.badRequest(res, parsed.message);
 
   const result = await sendContactSubmission({
-    ...visitorMeta(req, body),
+    ...(await visitorMetaWithGeo(req, body)),
     ...parsed.data,
   });
 

@@ -9,14 +9,25 @@ export function escapeHtml(value: string) {
     .replace(/'/g, "&#39;");
 }
 
+/** Human-readable "City, Region, Country" from geo-enriched meta. */
+export function locationLine(meta: VisitorMeta): string | undefined {
+  const parts = [meta.city, meta.region, meta.country].filter(
+    (part): part is string => Boolean(part)
+  );
+  return parts.length > 0 ? parts.join(", ") : undefined;
+}
+
 export function metaRows(meta: VisitorMeta) {
   const rows: Array<[string, string | undefined]> = [
     ["When", new Date().toLocaleString("en-GB", { timeZone: "UTC" }) + " UTC"],
+    ["Location", locationLine(meta)],
+    ["Coordinates", meta.coordinates],
+    ["Timezone", meta.timezone],
+    ["Network", meta.org],
     ["IP", meta.ip],
     ["User-Agent", meta.userAgent],
     ["Referrer", meta.referrer],
     ["Path", meta.path],
-    ["Country", meta.country],
     ["Locale", meta.locale],
   ];
 

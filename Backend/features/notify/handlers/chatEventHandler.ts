@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { isMailerConfigured, sendChatNotification } from "../../../lib/mailer.js";
 import * as r from "../../../lib/response.js";
 import { isFailedMailResult, isSkippedMailResult } from "../utils/mailerResult.js";
-import { clipText, requestBody, visitorMeta } from "../utils/requestMeta.js";
+import { clipText, requestBody, visitorMetaWithGeo } from "../utils/requestMeta.js";
 
 export async function chatEventHandler(req: Request, res: Response) {
   if (!isMailerConfigured()) {
@@ -11,7 +11,7 @@ export async function chatEventHandler(req: Request, res: Response) {
 
   const body = requestBody(req);
   const result = await sendChatNotification({
-    ...visitorMeta(req, body),
+    ...(await visitorMetaWithGeo(req, body)),
     message: clipText(body.message, 600),
   });
 

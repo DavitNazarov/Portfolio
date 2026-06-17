@@ -1,4 +1,5 @@
 import type { Request } from "express";
+import { lookupGeo } from "./geoLookup.js";
 
 export type RequestBody = Record<string, unknown>;
 
@@ -36,4 +37,15 @@ export function visitorMeta(req: Request, body: RequestBody) {
     path: clipText(body.path, 200),
     locale: clipText(body.locale, 60),
   };
+}
+
+/**
+ * Request-derived metadata enriched with server-side IP geolocation.
+ * The geo lookup is best-effort and degrades to the base meta on failure,
+ * so notifications still send even if the geo provider is unreachable.
+ */
+export async function visitorMetaWithGeo(req: Request, body: RequestBody) {
+  const base = visitorMeta(req, body);
+  const geo = await lookupGeo(base.ip);
+  return { ...base, ...geo };
 }

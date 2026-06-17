@@ -1,5 +1,5 @@
 import type { ContactSubmission, EmailOptions } from "../types.js";
-import { escapeHtml, metaRows, wrapShell } from "./shared.js";
+import { escapeHtml, locationLine, metaRows, wrapShell } from "./shared.js";
 
 type ContactEmails = {
   owner: EmailOptions;
@@ -57,6 +57,8 @@ function ownerText(submission: ContactSubmission) {
     submission.comment,
     "",
     `When: ${new Date().toISOString()}`,
+    locationLine(submission) && `Location: ${locationLine(submission)}`,
+    submission.coordinates && `Coordinates: ${submission.coordinates}`,
     submission.ip && `IP: ${submission.ip}`,
     submission.path && `Path: ${submission.path}`,
   ]

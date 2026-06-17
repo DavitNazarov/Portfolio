@@ -3,7 +3,12 @@ export type VisitorMeta = {
   userAgent?: string;
   referrer?: string;
   path?: string;
+  city?: string;
+  region?: string;
   country?: string;
+  coordinates?: string;
+  timezone?: string;
+  org?: string;
   locale?: string;
 };
 
