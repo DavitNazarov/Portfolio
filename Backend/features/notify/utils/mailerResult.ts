@@ -28,10 +28,15 @@ export function mailerErrorMessage(result: unknown) {
   return "Failed to send contact message. Please try again later.";
 }
 
+/**
+ * Only known, explanatory provider errors are shown to the visitor. Anything
+ * else is logged server-side by the mail client and reported generically —
+ * raw provider messages can carry account and configuration detail.
+ */
 function friendlyResendError(message: string) {
   if (message.toLowerCase().includes("only send testing emails")) {
     return "This portfolio sends email through Resend. Until the sending domain is verified, Resend can only deliver messages to the verified owner email: nazarov.davit17@gmail.com.";
   }
 
-  return message;
+  return "Failed to send contact message. Please try again later.";
 }

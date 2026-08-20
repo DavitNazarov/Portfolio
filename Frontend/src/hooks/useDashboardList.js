@@ -30,16 +30,23 @@ export function useDashboardList({
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loadError, setLoadError] = useState("");
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Load failures are tracked separately from save/delete failures: the page
+  // needs to tell "the list is genuinely empty" apart from "the list never
+  // arrived", so a failed fetch is not rendered as an empty collection.
   const load = useCallback(async () => {
+    setLoading(true);
+    setLoadError("");
     try {
       const data = publicList ? await apiPublic(listPath) : await api(listPath);
       setList(data[dataKey] ?? []);
     } catch (err) {
-      setError(err.message);
+      setLoadError(err.message);
+      setList([]);
     } finally {
       setLoading(false);
     }
@@ -108,6 +115,8 @@ export function useDashboardList({
     list,
     loading,
     error,
+    loadError,
+    reload: load,
     editing,
     form,
     setForm,

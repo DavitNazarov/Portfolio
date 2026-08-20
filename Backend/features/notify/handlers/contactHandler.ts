@@ -26,5 +26,12 @@ export async function contactHandler(req: Request, res: Response) {
     return r.serverError(res, mailerErrorMessage(result));
   }
 
-  return r.sendSuccess(res, 200, "Message sent. A copy was sent to your email.");
+  const copySent = "copySent" in result && result.copySent;
+  return r.sendSuccess(
+    res,
+    200,
+    copySent
+      ? "Message sent. A copy was sent to your email."
+      : "Message sent. I'll get back to you soon."
+  );
 }

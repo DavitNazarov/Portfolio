@@ -2,7 +2,7 @@ import { createRateLimit } from "../../middleware/rateLimit.middleware.js";
 import { normalizeEmail } from "./utils/credentials.js";
 
 function emailRateLimitKey(req: { ip?: string; body?: { email?: unknown } }) {
-  return `${req.ip}:${normalizeEmail(req.body?.email)}`;
+  return `${req.ip ?? "unknown"}:${normalizeEmail(req.body?.email)}`;
 }
 
 export const loginRateLimit = createRateLimit({

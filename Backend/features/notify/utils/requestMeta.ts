@@ -7,6 +7,14 @@ export function requestBody(req: Request): RequestBody {
   return (req.body ?? {}) as RequestBody;
 }
 
+/**
+ * Best-effort visitor IP for *display in notification emails only*.
+ *
+ * X-Forwarded-For is caller-controlled and trivially spoofed, so this value
+ * must never be used for rate limiting, access control, or anything else
+ * security-relevant. Use `req.ip` for those — Express derives it from the
+ * trusted proxy hop count configured in app/middleware.ts.
+ */
 export function clientIp(req: Request): string | undefined {
   const forwardedFor = req.headers["x-forwarded-for"];
 

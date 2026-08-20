@@ -5,6 +5,7 @@ import DashboardCreateButton from "@/features/dashboard/components/DashboardCrea
 import DashboardEmptyState from "@/features/dashboard/components/DashboardEmptyState";
 import DashboardError from "@/features/dashboard/components/DashboardError";
 import DashboardLoading from "@/features/dashboard/components/DashboardLoading";
+import DashboardRetry from "@/features/dashboard/components/DashboardRetry";
 
 export default function DashboardCrudPage({ config }) {
   const dashboard = useDashboardList(config.resource);
@@ -38,10 +39,14 @@ export default function DashboardCrudPage({ config }) {
         />
       </Modal>
 
-      <DashboardError message={!dashboard.modalOpen ? dashboard.error : ""} />
+      <DashboardError
+        message={dashboard.loadError || (!dashboard.modalOpen ? dashboard.error : "")}
+      />
 
       {dashboard.loading ? (
         <DashboardLoading />
+      ) : dashboard.loadError ? (
+        <DashboardRetry onRetry={dashboard.reload} />
       ) : dashboard.list.length === 0 ? (
         <DashboardEmptyState
           actionLabel={config.emptyState.actionLabel}

@@ -17,7 +17,10 @@ export const loggedInUser = async (req: Request, res: Response, next: NextFuncti
     if (!user) return r.unauthorized(res);
 
     req.userId = String(user._id);
-    req.userRole = resolveUserRole(user.role ?? decoded.role);
+    // The stored role is the only source of truth. The role claim inside the
+    // token is never consulted, so a role change takes effect immediately and
+    // a token minted before a demotion cannot retain the old privileges.
+    req.userRole = resolveUserRole(user.role);
     next();
   } catch {
     return r.unauthorized(res);

@@ -47,6 +47,9 @@ function handleUnauthorized() {
 async function request(path, options = {}, useAuth = true, retried = false) {
   const url = buildUrl(path);
   const token = useAuth ? getToken() : null;
+  // fetch defaults to GET when no method is given, so `api("/some/path")` is a
+  // GET too and must get the same cold-start retry that apiPublic() gets.
+  const method = options.method ?? "GET";
 
   const response = await fetch(url, {
     ...options,
@@ -61,7 +64,7 @@ async function request(path, options = {}, useAuth = true, retried = false) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    if (response.status === 503 && !retried && options.method === "GET") {
+    if (response.status === 503 && !retried && method === "GET") {
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
       return request(path, options, useAuth, true);
     }

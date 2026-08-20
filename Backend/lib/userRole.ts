@@ -11,6 +11,10 @@ export function normalizeUserRole(role: unknown): UserRole | null {
   return null;
 }
 
+/**
+ * Falls back to the least-privileged role. A missing or unrecognized role must
+ * never grant admin — admin is only ever granted by an explicit stored value.
+ */
 export function resolveUserRole(role: unknown): UserRole {
-  return normalizeUserRole(role) ?? "admin";
+  return normalizeUserRole(role) ?? "viewer";
 }
