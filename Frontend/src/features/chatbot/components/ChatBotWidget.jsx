@@ -1,7 +1,11 @@
+import { lazy, Suspense } from "react";
 import { AnimatePresence } from "framer-motion";
 import ChatBotLauncher from "@/features/chatbot/components/ChatBotLauncher";
-import ChatBotPanel from "@/features/chatbot/components/ChatBotPanel";
 import { useChatBot } from "@/features/chatbot/hooks/useChatBot";
+
+// Only the launcher is on screen until someone opens the chat, so the panel and
+// its message rendering stay out of the entry chunk.
+const ChatBotPanel = lazy(() => import("@/features/chatbot/components/ChatBotPanel"));
 
 export default function ChatBotWidget() {
   const chat = useChatBot();
@@ -11,18 +15,20 @@ export default function ChatBotWidget() {
       <div className="relative flex flex-col items-end">
         <AnimatePresence>
           {chat.open && (
-            <ChatBotPanel
-              input={chat.input}
-              inputRef={chat.inputRef}
-              messages={chat.messages}
-              messagesRef={chat.messagesRef}
-              onClose={() => chat.setOpen(false)}
-              onInputChange={chat.setInput}
-              onReset={chat.reset}
-              onSend={chat.send}
-              panelRef={chat.panelRef}
-              thinking={chat.thinking}
-            />
+            <Suspense fallback={null}>
+              <ChatBotPanel
+                input={chat.input}
+                inputRef={chat.inputRef}
+                messages={chat.messages}
+                messagesRef={chat.messagesRef}
+                onClose={() => chat.setOpen(false)}
+                onInputChange={chat.setInput}
+                onReset={chat.reset}
+                onSend={chat.send}
+                panelRef={chat.panelRef}
+                thinking={chat.thinking}
+              />
+            </Suspense>
           )}
         </AnimatePresence>
 

@@ -1,6 +1,6 @@
 export default function TechStackSkeleton() {
   return (
-    <div className="animate-pulse">
+    <div aria-hidden className="animate-pulse">
       <div className="mb-10 sm:mb-12">
         <div className="flex items-center gap-3 mb-6">
           <div className="h-px w-10 bg-white/12" />

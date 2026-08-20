@@ -10,7 +10,7 @@ export default function ChatBotLauncher({ greeted, onToggle, open, triggerRef })
       onClick={onToggle}
       whileHover={{ scale: 1.06 }}
       whileTap={{ scale: 0.94 }}
-      className="relative flex h-14 w-14 items-center justify-center rounded-full border text-white shadow-xl transition-shadow duration-200 focus-visible:outline-none"
+      className="relative flex h-14 w-14 items-center justify-center rounded-full border text-white shadow-xl transition-shadow duration-200"
       style={{
         borderColor: `rgba(${CHATBOT_TINT}, 0.35)`,
         background: `linear-gradient(135deg, rgba(${CHATBOT_TINT},0.9) 0%, rgba(${CHATBOT_TINT},0.6) 60%, rgba(20,20,24,0.92) 120%)`,

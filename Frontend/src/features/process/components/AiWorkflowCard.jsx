@@ -9,11 +9,11 @@ export default function AiWorkflowCard() {
         <div
           className="flex h-12 w-12 items-center justify-center rounded-2xl border"
           style={{
-            borderColor: "rgba(167, 139, 250, 0.28)",
-            backgroundColor: "rgba(167, 139, 250, 0.13)",
+            borderColor: `rgba(${AI_TINT}, 0.28)`,
+            backgroundColor: `rgba(${AI_TINT}, 0.13)`,
           }}
         >
-          <BrainCircuit className="h-5 w-5 text-violet-300" />
+          <BrainCircuit className="h-5 w-5" style={{ color: `rgb(${AI_TINT})` }} />
         </div>
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -30,7 +30,7 @@ export default function AiWorkflowCard() {
           </h3>
           <ul className="mt-4 grid gap-2.5">
             {AI_USAGE_POINTS.map((item) => (
-              <li key={item} className="flex items-start gap-2.5 text-[13.5px] leading-6 text-muted-foreground/70">
+              <li key={item} className="flex items-start gap-2.5 text-[13.5px] leading-6 text-ink-1">
                 <CheckCircle2 className="mt-1 h-3.5 w-3.5 shrink-0 text-violet-300/80" />
                 <span>{item}</span>
               </li>

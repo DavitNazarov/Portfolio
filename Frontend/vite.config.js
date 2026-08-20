@@ -23,5 +23,15 @@ export default defineConfig({
   build: {
     outDir: "dist",
     assetsDir: "assets",
+    rollupOptions: {
+      output: {
+        // Framework and animation code changes far less often than app code —
+        // splitting them keeps the big chunks cached across deploys.
+        manualChunks: {
+          react: ["react", "react-dom", "react-dom/client", "react-router-dom"],
+          motion: ["framer-motion"],
+        },
+      },
+    },
   },
 });

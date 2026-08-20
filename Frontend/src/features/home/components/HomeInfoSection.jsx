@@ -34,7 +34,7 @@ export default function HomeInfoSection({
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
         />
-        <span className="text-[10px] font-mono tracking-[0.34em] uppercase text-muted-foreground/55">
+        <span className="text-[10px] font-mono tracking-[0.34em] uppercase text-ink-2">
           At a glance
         </span>
       </motion.div>

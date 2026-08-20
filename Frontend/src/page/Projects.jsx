@@ -1,13 +1,12 @@
 import { useMemo } from "react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { useFetchData } from "@/hooks/useFetchData";
-import { API_ROUTES } from "@/constants/routes";
+import { usePortfolio } from "@/context/portfolioStore";
 import { sortByYear } from "@/lib/utils";
 import ProjectList from "@/features/projects/components/ProjectList";
 import { PROJECTS_TINT } from "@/features/projects/constants/projects";
 
 export default function Projects() {
-  const { data: projects, loading } = useFetchData(API_ROUTES.PROJECTS.PUBLIC, "projects");
+  const { projects, loading, error, refetch } = usePortfolio();
   const sorted = useMemo(() => sortByYear(projects, (p) => p.year), [projects]);
 
   return (
@@ -22,7 +21,7 @@ export default function Projects() {
         tint={PROJECTS_TINT}
       />
 
-      <ProjectList loading={loading} projects={sorted} />
+      <ProjectList loading={loading} projects={sorted} error={error} onRetry={refetch} />
     </div>
   );
 }

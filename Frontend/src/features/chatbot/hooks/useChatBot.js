@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiPublic } from "@/lib/api";
 import { trackChatMessage, trackChatOpen } from "@/lib/notify";
 import { ASSISTANT_NAME, CHATBOT_FALLBACKS } from "@/features/chatbot/constants/chatbot";
-import { findBestAnswer } from "@/features/chatbot/utils/answerEngine";
 import { toAiHistory } from "@/features/chatbot/utils/aiHistory";
 
 export function useChatBot() {
@@ -136,6 +135,9 @@ export function useChatBot() {
       const answer = response.answer?.trim() || "I had the thought, then dropped it. Try me again?";
       setMessages((current) => [...current, { sender: "bot", text: answer }]);
     } catch (error) {
+      // The local knowledge base is ~10 KB and is only needed when the AI call
+      // fails, so it is pulled in on demand rather than shipped up front.
+      const { findBestAnswer } = await import("@/features/chatbot/utils/answerEngine");
       const fallback = findBestAnswer(trimmed) ?? CHATBOT_FALLBACKS[0];
       console.warn("Atlas AI fallback used:", error.message);
       setMessages((current) => [...current, { sender: "bot", text: fallback }]);

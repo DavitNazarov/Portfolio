@@ -28,7 +28,7 @@ export default function StackStat({ value, label, delay = 0, active }) {
       <p className="relative text-lg sm:text-xl font-light tracking-tight text-foreground tabular-nums">
         {display}
       </p>
-      <p className="relative mt-1 text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground/45">
+      <p className="relative mt-1 text-[10px] font-mono uppercase tracking-[0.22em] text-ink-2">
         {label}
       </p>
     </div>

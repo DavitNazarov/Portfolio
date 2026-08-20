@@ -26,7 +26,7 @@ export default function EducationForm({ editing, error, form, onCancel, onSubmit
         onChange={(value) => setForm((current) => ({ ...current, period: value }))}
         required
       />
-      <p className="-mt-2 text-xs text-muted-foreground/60">
+      <p className="-mt-2 text-xs text-ink-1">
         Add “Present” to mark this as current.
       </p>
       <FormField

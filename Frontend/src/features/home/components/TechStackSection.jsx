@@ -24,7 +24,7 @@ export default function TechStackSection({ techGroups, totalTools, projectCount 
             transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
             className="h-px w-10 bg-white/25"
           />
-          <span className="text-[10px] font-mono tracking-[0.34em] uppercase text-muted-foreground/55">
+          <span className="text-[10px] font-mono tracking-[0.34em] uppercase text-ink-2">
             Capability Map
           </span>
         </div>
@@ -50,7 +50,7 @@ export default function TechStackSection({ techGroups, totalTools, projectCount 
             </motion.h3>
             <motion.p
               variants={FADE_UP}
-              className="mt-5 max-w-lg text-[13.5px] sm:text-sm leading-6 text-muted-foreground/65"
+              className="mt-5 max-w-lg text-[13.5px] sm:text-sm leading-6 text-ink-1"
             >
               Instead of a flat badge wall, the stack reads like a working system — grouped by the
               surface each tool is responsible for.

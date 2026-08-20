@@ -28,7 +28,7 @@ export default function ExperienceForm({ editing, error, form, onCancel, onSubmi
         onChange={(value) => setForm((current) => ({ ...current, period: value }))}
         required
       />
-      <p className="-mt-2 text-xs text-muted-foreground/60">
+      <p className="-mt-2 text-xs text-ink-1">
         Add “Present” to mark this as the current role.
       </p>
       <FormField

@@ -22,14 +22,14 @@ export default function ContactForm({
         <div>
           <p
             className="text-[10px] font-mono uppercase tracking-[0.28em]"
-            style={{ color: `rgba(${CONTACT_TINT}, 0.78)` }}
+            style={{ color: `rgba(${CONTACT_TINT}, 0.85)` }}
           >
             Feedback form
           </p>
           <h3 className="mt-2 text-xl sm:text-2xl font-light tracking-tight text-foreground">
             Send a message
           </h3>
-          <p className="mt-3 text-[12.5px] leading-5 text-muted-foreground/60">
+          <p className="mt-3 text-[12.5px] leading-5 text-ink-1">
             Email delivery is powered by Resend. While the sending domain is being verified,
             copies can be delivered only to the verified owner email:{" "}
             <span className="font-mono text-foreground/75">{PERSONAL.email}</span>.

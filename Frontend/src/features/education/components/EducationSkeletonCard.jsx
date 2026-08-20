@@ -1,6 +1,12 @@
+import { EDUCATION_TINT } from "@/features/education/constants/education";
+
 export default function EducationSkeletonCard() {
   return (
-    <div className="animate-pulse rounded-[1.4rem] border border-white/6 bg-white/[0.02] p-5 sm:p-6 space-y-4">
+    <div
+      aria-hidden
+      className="animate-pulse rounded-[1.4rem] border bg-white/[0.02] p-5 sm:p-6 space-y-4"
+      style={{ borderColor: `rgba(${EDUCATION_TINT}, 0.12)` }}
+    >
       <div className="flex justify-between">
         <div className="h-10 w-10 rounded-2xl bg-white/7" />
         <div className="h-5 w-16 rounded-full bg-white/4" />

@@ -10,7 +10,5 @@ export const CARD_VARIANT = {
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.65, ease: EASE } },
 };
 
-export const AWARD_CARD_VARIANT = {
-  hidden: { opacity: 0, y: 28, scale: 0.985 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.65, ease: EASE } },
-};
+/** Awards reuse the standard card entrance; kept as an alias for call-site clarity. */
+export const AWARD_CARD_VARIANT = CARD_VARIANT;

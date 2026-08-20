@@ -25,14 +25,14 @@ export default function ChatInput({ input, inputRef, onInputChange, onSend, thin
           onChange={(event) => onInputChange(event.target.value)}
           placeholder="Ask about Davit…"
           aria-label="Ask about Davit"
-          className="flex-1 bg-transparent text-[13px] text-foreground/95 placeholder:text-muted-foreground/45 py-2 focus:outline-none"
+          className="min-h-11 flex-1 bg-transparent py-2 text-[13px] text-foreground/95 placeholder:text-ink-2 focus:outline-none"
         />
         <motion.button
           type="submit"
           disabled={!canSend}
           whileHover={{ scale: canSend ? 1.05 : 1 }}
           whileTap={{ scale: canSend ? 0.95 : 1 }}
-          className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-opacity duration-200 disabled:opacity-40"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#160f26] transition-opacity duration-200 disabled:opacity-40"
           style={{
             background: `linear-gradient(135deg, rgba(${CHATBOT_TINT},0.95), rgba(${CHATBOT_TINT},0.72))`,
             boxShadow: canSend ? `0 6px 18px -6px rgba(${CHATBOT_TINT},0.7)` : "none",
@@ -42,7 +42,7 @@ export default function ChatInput({ input, inputRef, onInputChange, onSend, thin
           <Send className="h-3.5 w-3.5" />
         </motion.button>
       </div>
-      <p className="mt-2 text-center text-[9.5px] font-mono uppercase tracking-[0.28em] text-muted-foreground/35">
+      <p className="mt-2 text-center text-[10px] font-mono uppercase tracking-[0.28em] text-ink-2">
         Press enter · Esc to close
       </p>
     </form>

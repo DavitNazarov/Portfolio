@@ -6,7 +6,7 @@ export default function WorkflowCard({ index, item }) {
 
   return (
     <SpotlightCard key={item.title} tint={PROCESS_TINT} delay={index * 0.08} className="p-5 sm:p-6 h-full">
-      <div className="flex h-full flex-col gap-4">
+      <div className="flex flex-1 flex-col gap-4">
         <div
           className="flex h-11 w-11 items-center justify-center rounded-2xl border"
           style={{
@@ -19,12 +19,12 @@ export default function WorkflowCard({ index, item }) {
         <div>
           <p
             className="text-[10px] font-mono uppercase tracking-[0.24em]"
-            style={{ color: `rgba(${PROCESS_TINT}, 0.72)` }}
+            style={{ color: `rgba(${PROCESS_TINT}, 0.9)` }}
           >
             0{index + 1} · Workflow
           </p>
           <h3 className="mt-2 text-base font-medium text-foreground/95">{item.title}</h3>
-          <p className="mt-3 text-[13.5px] leading-6 text-muted-foreground/68">{item.text}</p>
+          <p className="mt-3 text-[13.5px] leading-6 text-ink-1">{item.text}</p>
         </div>
       </div>
     </SpotlightCard>

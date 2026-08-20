@@ -57,15 +57,15 @@ export default function EducationCard({ edu, index }) {
           <h3 className="text-[15px] sm:text-base font-medium text-foreground/95 leading-snug mb-2">
             {edu.degree}
           </h3>
-          <div className="flex items-start gap-1.5 text-[13px] text-muted-foreground/60 leading-snug">
+          <div className="flex items-start gap-1.5 text-[13px] text-ink-1 leading-snug">
             <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5" />
             <span>{edu.institution}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-1.5 pt-2 border-t border-white/[0.06]">
-          <CalendarDays className="h-3 w-3 text-muted-foreground/45" />
-          <span className="text-[11px] font-mono text-muted-foreground/55">{edu.period}</span>
+          <CalendarDays className="h-3 w-3 text-ink-2" />
+          <span className="text-[11px] font-mono text-ink-2">{edu.period}</span>
         </div>
       </div>
     </SpotlightCard>

@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Trophy } from "lucide-react";
 import { AWARD_CARD_VARIANT } from "@/features/home/constants/motion";
-import { AWARD_TINT, MEDAL_META } from "@/features/home/constants/awards";
+import { AWARD_TINT, medalMeta } from "@/features/home/constants/awards";
 
 export default function AwardCard({ award, index }) {
   const mouseX = useMotionValue(0.5);
@@ -72,7 +72,7 @@ export default function AwardCard({ award, index }) {
           </div>
           <span
             className="text-[10px] font-mono uppercase tracking-[0.24em] mt-1"
-            style={{ color: `rgba(${AWARD_TINT}, 0.5)` }}
+            style={{ color: `rgba(${AWARD_TINT}, 0.85)` }}
           >
             {String(index + 1).padStart(2, "0")}
           </span>
@@ -82,13 +82,13 @@ export default function AwardCard({ award, index }) {
           {award.title}
         </h4>
 
-        <p className="mt-1 text-[13px] text-muted-foreground/60 leading-snug">
+        <p className="mt-1 text-[13px] text-ink-1 leading-snug">
           {award.category}
         </p>
 
-        <div className="mt-4 flex flex-wrap gap-1.5">
+        <div className="mt-auto pt-4 flex flex-wrap gap-1.5">
           {(award.medals ?? []).map((medal) => {
-            const meta = MEDAL_META[medal] ?? { tint: "148, 163, 184", label: medal };
+            const meta = medalMeta(medal);
             return (
               <span
                 key={medal}
@@ -105,11 +105,9 @@ export default function AwardCard({ award, index }) {
           })}
         </div>
 
-        {award.period && (
-          <p className="mt-auto pt-4 text-[11px] font-mono text-muted-foreground/45 tracking-wide tabular-nums">
-            {award.period}
-          </p>
-        )}
+        <p className="mt-2.5 min-h-4 text-[11px] font-mono text-ink-2 tracking-wide tabular-nums">
+          {award.period || "\u00A0"}
+        </p>
       </div>
     </motion.article>
   );

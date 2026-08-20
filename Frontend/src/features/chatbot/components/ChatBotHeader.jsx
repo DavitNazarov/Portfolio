@@ -34,7 +34,7 @@ export default function ChatBotHeader({ messagesCount, onClose, onReset }) {
           <h3 className="mt-1.5 text-lg sm:text-xl font-light tracking-tight text-foreground leading-none">
             Ask <span className="font-serif italic font-normal text-white">{ASSISTANT_NAME}</span>
           </h3>
-          <p className="mt-1.5 text-[11.5px] text-muted-foreground/60 leading-snug">
+          <p className="mt-1.5 text-[11.5px] text-ink-1 leading-snug">
             OpenRouter-powered, using live portfolio data.
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function ChatBotHeader({ messagesCount, onClose, onReset }) {
             onClick={onReset}
             whileHover={{ scale: 1.08, rotate: -18 }}
             whileTap={{ scale: 0.92 }}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-muted-foreground/70 transition-colors duration-200 hover:text-foreground hover:border-white/20"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-ink-1 transition-colors duration-200 hover:text-foreground hover:border-white/20"
             aria-label="Clear conversation"
             title="Clear"
           >
@@ -59,7 +59,7 @@ export default function ChatBotHeader({ messagesCount, onClose, onReset }) {
           onClick={onClose}
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.92 }}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-muted-foreground/70 transition-colors duration-200 hover:text-foreground hover:border-white/20"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-ink-1 transition-colors duration-200 hover:text-foreground hover:border-white/20"
           aria-label="Close"
         >
           <X className="h-4 w-4" />

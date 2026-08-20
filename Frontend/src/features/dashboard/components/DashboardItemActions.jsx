@@ -12,7 +12,7 @@ export default function DashboardItemActions({ onEdit, onRemove }) {
       </button>
       <button
         onClick={onRemove}
-        className="p-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+        className="rounded-lg p-2 text-destructive-foreground transition-colors hover:bg-destructive/20"
         aria-label="Delete"
       >
         <Trash2 className="w-4 h-4" />

@@ -41,7 +41,7 @@ export default function SectionHeader({
         />
         <span
           className="text-[10px] font-mono tracking-[0.34em] uppercase"
-          style={{ color: `rgba(${tint}, 0.75)` }}
+          style={{ color: `rgba(${tint}, 0.85)` }}
         >
           {number} · {eyebrow}
         </span>
@@ -71,7 +71,7 @@ export default function SectionHeader({
       {description && (
         <motion.p
           variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease, delay: 0.2 } } }}
-          className="mt-5 max-w-xl text-sm sm:text-[15px] leading-6 text-muted-foreground/65"
+          className="mt-5 max-w-xl text-sm sm:text-[15px] leading-6 text-ink-1"
         >
           {description}
         </motion.p>

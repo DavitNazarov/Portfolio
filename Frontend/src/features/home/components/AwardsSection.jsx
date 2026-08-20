@@ -1,11 +1,14 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import AwardCard from "@/features/home/components/AwardCard";
+import AwardStats from "@/features/home/components/AwardStats";
+import { medalStats } from "@/features/home/utils/medalStats";
 import { EASE, FADE_UP } from "@/features/home/constants/motion";
 
 export default function AwardsSection({ awards }) {
   const sectionRef = useRef(null);
   const inView = useInView(sectionRef, { once: true, amount: 0.15 });
+  const stats = useMemo(() => medalStats(awards), [awards]);
 
   return (
     <motion.section
@@ -23,7 +26,7 @@ export default function AwardsSection({ awards }) {
             transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
             className="h-px w-10 bg-white/25"
           />
-          <span className="text-[10px] font-mono tracking-[0.34em] uppercase text-muted-foreground/55">
+          <span className="text-[10px] font-mono tracking-[0.34em] uppercase text-ink-2">
             Record
           </span>
         </div>
@@ -46,6 +49,8 @@ export default function AwardsSection({ awards }) {
           .
         </motion.h3>
       </motion.div>
+
+      <AwardStats stats={stats} active={inView} />
 
       <motion.div
         variants={{ show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } } }}

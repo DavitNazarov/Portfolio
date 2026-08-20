@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SECTIONS } from "@/layout/constants/sections";
-
-function scrollToSection(id) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-}
+import { scrollToSection } from "@/layout/utils/scrollToSection";
 
 export default function SectionNav({ active }) {
   const [navHovered, setNavHovered] = useState(false);
@@ -32,7 +29,7 @@ export default function SectionNav({ active }) {
             onClick={() => scrollToSection(id)}
             aria-label={`Go to ${label}`}
             aria-current={isActive ? "true" : undefined}
-            className="group relative flex items-center gap-3 py-0.5"
+            className="group relative -my-1 flex min-h-9 items-center gap-3 py-1"
           >
             <motion.span
               aria-hidden

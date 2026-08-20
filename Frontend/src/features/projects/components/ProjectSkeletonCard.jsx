@@ -1,6 +1,12 @@
+import { PROJECTS_TINT } from "@/features/projects/constants/projects";
+
 export default function ProjectSkeletonCard() {
   return (
-    <div className="animate-pulse rounded-[1.4rem] border border-white/6 bg-white/[0.02] p-5 sm:p-7">
+    <div
+      aria-hidden
+      className="animate-pulse rounded-[1.4rem] border bg-white/[0.02] p-5 sm:p-7"
+      style={{ borderColor: `rgba(${PROJECTS_TINT}, 0.12)` }}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3.5">
           <div className="h-11 w-11 rounded-2xl bg-white/7" />

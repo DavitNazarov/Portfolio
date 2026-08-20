@@ -1,13 +1,12 @@
 import { useMemo } from "react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { useFetchData } from "@/hooks/useFetchData";
-import { API_ROUTES } from "@/constants/routes";
+import { usePortfolio } from "@/context/portfolioStore";
 import { sortByLatestPeriod } from "@/lib/utils";
 import EducationList from "@/features/education/components/EducationList";
 import { EDUCATION_TINT } from "@/features/education/constants/education";
 
 export default function Education() {
-  const { data: education, loading } = useFetchData(API_ROUTES.EDUCATION.PUBLIC, "education");
+  const { education, loading, error, refetch } = usePortfolio();
   const sorted = useMemo(() => sortByLatestPeriod(education), [education]);
 
   return (
@@ -22,7 +21,7 @@ export default function Education() {
         tint={EDUCATION_TINT}
       />
 
-      <EducationList education={sorted} loading={loading} />
+      <EducationList education={sorted} loading={loading} error={error} onRetry={refetch} />
     </div>
   );
 }

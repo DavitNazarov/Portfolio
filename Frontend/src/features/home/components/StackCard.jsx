@@ -28,13 +28,7 @@ export default function StackCard({ group, index, total, totalTools }) {
     mouseY.set(0.5);
   };
 
-  const layoutClass = group.featured
-    ? "sm:col-span-2 lg:col-span-6"
-    : total === 5
-    ? "lg:col-span-3"
-    : total === 6
-    ? "lg:col-span-3"
-    : "lg:col-span-3";
+  const layoutClass = group.featured ? "sm:col-span-2 lg:col-span-6" : "lg:col-span-3";
 
   const toolShare = totalTools > 0 ? Math.min(1, group.items.length / totalTools) : 0;
 
@@ -95,15 +89,15 @@ export default function StackCard({ group, index, total, totalTools }) {
             <div className="min-w-0">
               <p
                 className="text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.24em] leading-none"
-                style={{ color: `rgba(${group.tint}, 0.75)` }}
+                style={{ color: `rgba(${group.tint}, 0.85)` }}
               >
                 {String(index + 1).padStart(2, "0")} · Lane
               </p>
               <h4 className="mt-1.5 text-[15px] sm:text-base font-medium text-foreground/95 leading-tight">
                 {group.title}
               </h4>
-              <p className="mt-1 text-[11px] font-mono tracking-[0.06em] text-muted-foreground/45">
-                {group.tagline}
+              <p className="mt-1 min-h-4 text-[11px] font-mono tracking-[0.06em] text-ink-2">
+                {group.tagline || "\u00A0"}
               </p>
             </div>
           </div>
@@ -114,24 +108,24 @@ export default function StackCard({ group, index, total, totalTools }) {
               style={{ color: `rgba(${group.tint}, 0.85)` }}
             >
               {group.items.length}
-              <span className="text-muted-foreground/35">/{totalTools}</span>
+              <span className="text-ink-3">/{totalTools}</span>
             </span>
             <ArrowUpRight
-              className="h-3.5 w-3.5 text-muted-foreground/30 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-              style={{ color: `rgba(${group.tint}, 0.55)` }}
+              className="h-3.5 w-3.5 text-ink-3 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              style={{ color: `rgba(${group.tint}, 0.8)` }}
             />
           </div>
         </div>
 
         <p
-          className={`mt-4 text-[13px] sm:text-[13.5px] leading-6 text-muted-foreground/72 ${
+          className={`mt-4 text-[13px] sm:text-[13.5px] leading-6 text-ink-1 ${
             group.featured ? "max-w-lg" : ""
           }`}
         >
           {group.description}
         </p>
 
-        <div className="mt-4 mb-1 flex items-center gap-2.5">
+        <div className="mt-auto pt-4 mb-1 flex items-center gap-2.5">
           <div className="relative h-[2px] flex-1 overflow-hidden rounded-full bg-white/[0.06]">
             <motion.div
               className="absolute inset-y-0 left-0 rounded-full"
@@ -141,7 +135,7 @@ export default function StackCard({ group, index, total, totalTools }) {
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
             />
           </div>
-          <span className="text-[9.5px] font-mono tracking-[0.12em] text-muted-foreground/35 tabular-nums">
+          <span className="text-[9.5px] font-mono tracking-[0.12em] text-ink-3 tabular-nums">
             {Math.round(toolShare * 100)}%
           </span>
         </div>

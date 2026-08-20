@@ -21,18 +21,18 @@ export default function ContactSocialLinks() {
             <div>
               <p
                 className="text-[10px] font-mono uppercase tracking-[0.2em]"
-                style={{ color: `rgba(${CONTACT_TINT}, 0.75)` }}
+                style={{ color: `rgba(${CONTACT_TINT}, 0.85)` }}
               >
                 {social.label}
               </p>
               <p className="mt-2 text-[15px] font-medium text-foreground/95 leading-tight">
                 {social.name}
               </p>
-              <p className="mt-1 text-[12px] font-mono text-muted-foreground/55">
+              <p className="mt-1 text-[12px] font-mono text-ink-2">
                 {social.handle}
               </p>
             </div>
-            <ArrowUpRight className="h-3.5 w-3.5 shrink-0" style={{ color: `rgba(${CONTACT_TINT}, 0.6)` }} />
+            <ArrowUpRight className="h-3.5 w-3.5 shrink-0" style={{ color: `rgba(${CONTACT_TINT}, 0.85)` }} />
           </div>
         </SpotlightCard>
       ))}

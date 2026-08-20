@@ -51,7 +51,7 @@ export default function SpotlightCard({
       whileHover={hover ? { y: -3, transition: { type: "spring", stiffness: 300, damping: 24 } } : undefined}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      className={`group relative overflow-hidden rounded-[1.4rem] border backdrop-blur-[2px] ${className}`}
+      className={`group relative flex flex-col overflow-hidden rounded-[1.4rem] border backdrop-blur-[2px] ${className}`}
       style={{
         borderColor: `rgba(${tint}, 0.15)`,
         background: `linear-gradient(150deg, rgba(${tint}, 0.07) 0%, rgba(255,255,255,0.02) 45%, rgba(0,0,0,0.16) 100%)`,
@@ -70,7 +70,7 @@ export default function SpotlightCard({
           background: `linear-gradient(90deg, transparent 0%, rgba(${tint}, 0.55) 50%, transparent 100%)`,
         }}
       />
-      <div className="relative">{children}</div>
+      <div className="relative flex min-h-0 flex-1 flex-col">{children}</div>
     </MotionTag>
   );
 }

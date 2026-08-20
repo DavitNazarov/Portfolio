@@ -14,12 +14,12 @@ export default function MessageBubble({ message }) {
     >
       <div
         className={`max-w-[86%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${
-          isUser ? "text-white" : "text-foreground/92 border"
+          isUser ? "text-[#160f26]" : "text-foreground/92 border"
         }`}
         style={
           isUser
             ? {
-                background: `linear-gradient(135deg, rgba(${CHATBOT_TINT},0.85), rgba(${CHATBOT_TINT},0.65))`,
+                background: `linear-gradient(135deg, rgb(${CHATBOT_TINT}), rgba(${CHATBOT_TINT},0.86))`,
                 boxShadow: `0 8px 24px -8px rgba(${CHATBOT_TINT},0.55)`,
               }
             : {

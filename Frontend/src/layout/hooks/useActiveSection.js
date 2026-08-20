@@ -1,29 +1,40 @@
 import { useEffect, useState } from "react";
 import { SECTIONS } from "@/layout/constants/sections";
 
+/**
+ * Tracks the section currently under the reading line.
+ *
+ * Uses one IntersectionObserver rather than a scroll listener: the previous
+ * version ran on every scroll event with no throttling and read `offsetTop` for
+ * all six sections, forcing a synchronous reflow on every frame Lenis produced.
+ */
 export function useActiveSection() {
   const [active, setActive] = useState(SECTIONS[0].id);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const triggerLine = window.scrollY + window.innerHeight * 0.4;
-      let currentId = SECTIONS[0].id;
+    const elements = SECTIONS.map(({ id }) => document.getElementById(id)).filter(Boolean);
+    if (elements.length === 0) return;
 
-      for (const { id } of SECTIONS) {
-        const element = document.getElementById(id);
-        if (element && element.offsetTop <= triggerLine) currentId = id;
-      }
+    const visible = new Set();
 
-      setActive(currentId);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
 
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
+        // Sections are observed in document order, so the last visible one is
+        // the furthest down the page — that is the one being read.
+        const current = SECTIONS.filter(({ id }) => visible.has(id)).pop();
+        if (current) setActive(current.id);
+      },
+      // A band across the upper-middle of the viewport acts as the reading line.
+      { rootMargin: "-35% 0px -60% 0px", threshold: 0 }
+    );
+
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
   }, []);
 
   return active;

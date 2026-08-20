@@ -37,13 +37,13 @@ export default function ExperienceCard({ exp, index, total }) {
                 style={{ color: `rgba(${EXPERIENCE_TINT}, 0.8)` }}
               >
                 {String(index + 1).padStart(2, "0")}
-                <span className="text-muted-foreground/30"> / {String(total).padStart(2, "0")}</span>
-                <span className="text-muted-foreground/35"> · Role</span>
+                <span className="text-ink-3"> / {String(total).padStart(2, "0")}</span>
+                <span className="text-ink-3"> · Role</span>
               </p>
               <h3 className="mt-2 text-lg sm:text-xl font-medium text-foreground/95 leading-snug">
                 {exp.role}
               </h3>
-              <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground/60">
+              <div className="mt-1 flex items-center gap-1.5 text-sm text-ink-1">
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
                 <span>{exp.company}</span>
               </div>
@@ -80,7 +80,7 @@ export default function ExperienceCard({ exp, index, total }) {
         </div>
 
         {exp.description && (
-          <p className="text-[13.5px] leading-6 text-muted-foreground/70 max-w-2xl">
+          <p className="text-[13.5px] leading-6 text-ink-1 max-w-2xl">
             {exp.description}
           </p>
         )}

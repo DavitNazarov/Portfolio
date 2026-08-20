@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="42%" r="62%">
+      <stop offset="0%" stop-color="#1e1e1e"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <text x="600" y="286" font-family="Georgia, 'Times New Roman', serif" font-size="128"
+        fill="#fafafa" text-anchor="middle">Davit</text>
+  <text x="600" y="410" font-family="Georgia, 'Times New Roman', serif" font-size="128"
+        font-style="italic" fill="#fafafa" text-anchor="middle">Nazarov</text>
+  <rect x="552" y="452" width="96" height="1" fill="#ffffff" opacity="0.28"/>
+  <text x="600" y="512" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="21"
+        letter-spacing="7" fill="#8c8c8c" text-anchor="middle">FRONT-END DEVELOPER</text>
+</svg>

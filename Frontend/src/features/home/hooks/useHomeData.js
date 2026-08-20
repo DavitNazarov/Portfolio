@@ -1,49 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
-import { API_ROUTES } from "@/constants/routes";
-import { apiPublic } from "@/lib/api";
+import { useMemo } from "react";
+import { usePortfolio } from "@/context/portfolioStore";
 import { isCurrentPeriod, sortByLatestPeriod } from "@/lib/utils";
 import { groupTechnologies } from "@/features/home/utils/groupTechnologies";
 
 export function useHomeData() {
-  const [experiences, setExperiences] = useState([]);
-  const [education, setEducation] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [awards, setAwards] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadHomeData() {
-      try {
-        const [expRes, eduRes, projRes, awardsRes] = await Promise.all([
-          apiPublic(API_ROUTES.EXPERIENCE.PUBLIC),
-          apiPublic(API_ROUTES.EDUCATION.PUBLIC),
-          apiPublic(API_ROUTES.PROJECTS.PUBLIC),
-          apiPublic(API_ROUTES.AWARDS.PUBLIC),
-        ]);
-
-        if (cancelled) return;
-        setExperiences(expRes.experiences ?? []);
-        setEducation(eduRes.education ?? []);
-        setProjects(projRes.projects ?? []);
-        setAwards(awardsRes.awards ?? []);
-      } catch {
-        if (cancelled) return;
-        setExperiences([]);
-        setEducation([]);
-        setProjects([]);
-        setAwards([]);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    loadHomeData();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { experiences, education, projects, awards, loading, error } = usePortfolio();
 
   const sortedWork = useMemo(() => sortByLatestPeriod(experiences), [experiences]);
   const highlightedWork = sortedWork[0];
@@ -75,6 +36,7 @@ export function useHomeData() {
     awards,
     currentEdu,
     eduIsCurrent,
+    error,
     focusTech,
     highlightedWork,
     loading,

@@ -16,11 +16,11 @@ export default function ContactFooter() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
           <span className="relative flex h-1.5 w-1.5 rounded-full" style={{ backgroundColor: `rgb(${CONTACT_TINT})` }} />
         </span>
-        <p className="text-xs font-mono text-muted-foreground/50">
-          © 2026 {PERSONAL.name} · Available for work
+        <p className="text-xs font-mono text-ink-2">
+          © {new Date().getFullYear()} {PERSONAL.name} · Available for work
         </p>
       </div>
-      <p className="text-xs font-mono text-muted-foreground/35">
+      <p className="text-xs font-mono text-ink-3">
         Built with React & Framer Motion
       </p>
     </motion.div>

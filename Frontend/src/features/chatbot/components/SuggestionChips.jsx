@@ -12,7 +12,7 @@ export default function SuggestionChips({ onSend }) {
         <span className="h-px flex-1" style={{ backgroundColor: `rgba(${CHATBOT_TINT}, 0.15)` }} />
         <span
           className="text-[9px] font-mono uppercase tracking-[0.32em]"
-          style={{ color: `rgba(${CHATBOT_TINT}, 0.55)` }}
+          style={{ color: `rgba(${CHATBOT_TINT}, 0.9)` }}
         >
           Suggested
         </span>
@@ -29,7 +29,7 @@ export default function SuggestionChips({ onSend }) {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 + index * 0.04, ease: CHATBOT_EASE }}
-            className="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] text-foreground/85 transition-colors duration-200 cursor-default"
+            className="inline-flex min-h-9 items-center rounded-full border px-3 py-1.5 text-[11px] text-foreground/85 transition-colors duration-200"
             style={{
               borderColor: `rgba(${CHATBOT_TINT}, 0.22)`,
               backgroundColor: `rgba(${CHATBOT_TINT}, 0.08)`,

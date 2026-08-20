@@ -67,7 +67,7 @@ export default function HomeHero({ highlightedWork, loading, workIsCurrent }) {
             ) : (
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/25" />
             )}
-            <span className="text-muted-foreground/45 font-mono text-[10px] uppercase tracking-[0.22em]">
+            <span className="text-ink-2 font-mono text-[10px] uppercase tracking-[0.22em]">
               {workIsCurrent ? "Current" : "Last role"}
             </span>
             <span className="text-foreground/80 font-light tracking-wide">{highlightedWork.role}</span>
@@ -87,7 +87,7 @@ export default function HomeHero({ highlightedWork, loading, workIsCurrent }) {
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           style={{ originY: "top" }}
         />
-        <span className="text-[9px] font-mono tracking-[0.28em] uppercase text-white/18">scroll</span>
+        <span className="text-[9px] font-mono tracking-[0.28em] uppercase text-ink-3">scroll</span>
       </motion.div>
     </div>
   );

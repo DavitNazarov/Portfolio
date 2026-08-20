@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import SpotlightCard from "@/components/ui/SpotlightCard";
+import { scrollToSection } from "@/layout/utils/scrollToSection";
 
 export default function HeroInfoCard({
   eyebrow,
@@ -15,8 +16,7 @@ export default function HeroInfoCard({
   emptyLabel,
 }) {
   const handleJump = () => {
-    if (!jumpTo) return;
-    document.getElementById(jumpTo)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (jumpTo) scrollToSection(jumpTo);
   };
 
   const hasData = !loading && Boolean(title);
@@ -90,15 +90,15 @@ export default function HeroInfoCard({
           <h3 className="text-[15px] sm:text-base font-medium text-foreground/95 leading-snug">
             {title}
           </h3>
-          <p className="mt-1 text-sm text-muted-foreground/65 leading-snug">{subtitle}</p>
+          <p className="mt-1 mb-5 text-sm text-ink-1 leading-snug">{subtitle}</p>
 
-          <div className="mt-5 pt-4 border-t border-white/[0.06] flex items-center justify-between gap-3">
-            <p className="text-[11px] font-mono text-muted-foreground/50 tabular-nums tracking-wide">
+          <div className="mt-auto pt-4 border-t border-white/[0.06] flex items-center justify-between gap-3">
+            <p className="text-[11px] font-mono text-ink-2 tabular-nums tracking-wide">
               {period}
             </p>
             <div
               className="flex items-center gap-1 text-[9.5px] font-mono uppercase tracking-[0.24em] transition-all duration-300 group-hover:translate-x-0.5"
-              style={{ color: `rgba(${tint}, 0.75)` }}
+              style={{ color: `rgba(${tint}, 0.85)` }}
             >
               View
               <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -106,7 +106,7 @@ export default function HeroInfoCard({
           </div>
         </>
       ) : (
-        <p className="text-sm text-muted-foreground/50 font-serif italic">{emptyLabel}</p>
+        <p className="text-sm text-ink-2 font-serif italic">{emptyLabel}</p>
       )}
     </SpotlightCard>
   );

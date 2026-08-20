@@ -1,13 +1,12 @@
 import { useMemo } from "react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { useFetchData } from "@/hooks/useFetchData";
-import { API_ROUTES } from "@/constants/routes";
+import { usePortfolio } from "@/context/portfolioStore";
 import { sortByLatestPeriod } from "@/lib/utils";
 import ExperienceList from "@/features/experience/components/ExperienceList";
 import { EXPERIENCE_TINT } from "@/features/experience/constants/experience";
 
 export default function Experience() {
-  const { data: experiences, loading } = useFetchData(API_ROUTES.EXPERIENCE.PUBLIC, "experiences");
+  const { experiences, loading, error, refetch } = usePortfolio();
   const sorted = useMemo(() => sortByLatestPeriod(experiences), [experiences]);
 
   return (
@@ -22,7 +21,7 @@ export default function Experience() {
         tint={EXPERIENCE_TINT}
       />
 
-      <ExperienceList experiences={sorted} loading={loading} />
+      <ExperienceList experiences={sorted} loading={loading} error={error} onRetry={refetch} />
     </div>
   );
 }

@@ -1,9 +1,30 @@
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+
+const INTERACTIVE = 'a, button, [role="button"], input, textarea, select, summary, label[for]';
+
+/** True only for devices that actually have a hovering pointer. */
+function usePrecisePointer() {
+  const [precise, setPrecise] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia("(pointer: fine)");
+    const update = () => setPrecise(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return precise;
+}
 
 export default function CustomCursor() {
   const [visible, setVisible] = useState(false);
   const [pointer, setPointer] = useState(false);
+  const precise = usePrecisePointer();
+  const reduceMotion = useReducedMotion();
+  const enabled = precise && !reduceMotion;
 
   const mx = useMotionValue(-100);
   const my = useMotionValue(-100);
@@ -14,15 +35,21 @@ export default function CustomCursor() {
   const ringY = useSpring(my, { stiffness: 160, damping: 22 });
 
   useEffect(() => {
+    if (!enabled) return;
+
     const onMove = (e) => {
       mx.set(e.clientX);
       my.set(e.clientY);
-      if (!visible) setVisible(true);
+      // Set unconditionally and let React bail out on an unchanged value —
+      // reading `visible` here would put it in the dep list and tear down and
+      // re-add all four listeners every time the cursor enters or leaves.
+      setVisible(true);
     };
+    // `closest` on a selector list beats getComputedStyle here: the old version
+    // forced a style recalculation for every element the pointer crossed.
     const onOver = (e) => {
-      const tag = e.target?.tagName?.toLowerCase();
-      const cur = window.getComputedStyle(e.target).cursor;
-      setPointer(cur === "pointer" || tag === "a" || tag === "button");
+      const target = e.target;
+      setPointer(target instanceof Element && Boolean(target.closest(INTERACTIVE)));
     };
     const onLeave = () => setVisible(false);
     const onEnter = () => setVisible(true);
@@ -37,7 +64,11 @@ export default function CustomCursor() {
       document.removeEventListener("mouseleave", onLeave);
       document.removeEventListener("mouseenter", onEnter);
     };
-  }, [mx, my, visible]);
+  }, [mx, my, enabled]);
+
+  // Without a precise pointer — or with reduced motion — the native cursor is
+  // restored by CSS and there is nothing to draw.
+  if (!enabled) return null;
 
   return (
     <>

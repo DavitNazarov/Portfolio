@@ -38,15 +38,18 @@ export default function ProjectCard({ project, index, total }) {
                 style={{ color: `rgba(${PROJECTS_TINT}, 0.8)` }}
               >
                 {String(index + 1).padStart(2, "0")}
-                <span className="text-muted-foreground/30"> / {String(total).padStart(2, "0")}</span>
-                {project.year && <span className="text-muted-foreground/35"> · {project.year}</span>}
+                <span className="text-ink-3"> / {String(total).padStart(2, "0")}</span>
+                {project.year && <span className="text-ink-3"> · {project.year}</span>}
               </p>
-              <h3 className="mt-2 text-lg sm:text-xl font-medium text-foreground/95 leading-snug flex items-center gap-2">
-                {project.name}
-                <ArrowUpRight
-                  className="h-4 w-4 shrink-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  style={{ color: `rgba(${PROJECTS_TINT}, 0.7)` }}
-                />
+              <h3 className="mt-2 flex items-start gap-2 text-lg sm:text-xl font-medium text-foreground/95 leading-snug">
+                <span>{project.name}</span>
+                {(live || github) && (
+                  <ArrowUpRight
+                    aria-hidden
+                    className="mt-1.5 h-4 w-4 shrink-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    style={{ color: `rgba(${PROJECTS_TINT}, 0.7)` }}
+                  />
+                )}
               </h3>
             </div>
           </div>
@@ -59,7 +62,7 @@ export default function ProjectCard({ project, index, total }) {
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05, y: -1 }}
                 whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/4 px-2.5 py-1.5 text-[11px] font-mono text-muted-foreground/65 transition-colors duration-200 hover:text-foreground hover:border-white/20 hover:bg-white/8"
+                className="flex min-h-9 items-center gap-1.5 rounded-lg border border-white/10 bg-white/4 px-3 py-1.5 text-[11px] font-mono text-ink-1 transition-colors duration-200 hover:border-white/20 hover:bg-white/8 hover:text-foreground"
               >
                 <Github className="h-3 w-3" />
                 GitHub
@@ -72,7 +75,7 @@ export default function ProjectCard({ project, index, total }) {
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05, y: -1 }}
                 whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-mono text-foreground/85 transition-colors duration-200"
+                className="flex min-h-9 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[11px] font-mono text-foreground/85 transition-colors duration-200"
                 style={{
                   borderColor: `rgba(${PROJECTS_TINT}, 0.35)`,
                   backgroundColor: `rgba(${PROJECTS_TINT}, 0.14)`,
@@ -86,7 +89,7 @@ export default function ProjectCard({ project, index, total }) {
         </div>
 
         {project.description && (
-          <p className="text-[13.5px] leading-6 text-muted-foreground/70 max-w-2xl">
+          <p className="text-[13.5px] leading-6 text-ink-1 max-w-2xl">
             {project.description}
           </p>
         )}
@@ -94,11 +97,11 @@ export default function ProjectCard({ project, index, total }) {
         <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] px-3.5 py-3">
           <p
             className="text-[10px] font-mono uppercase tracking-[0.22em]"
-            style={{ color: `rgba(${PROJECTS_TINT}, 0.75)` }}
+            style={{ color: `rgba(${PROJECTS_TINT}, 0.85)` }}
           >
             My part
           </p>
-          <p className="mt-1.5 text-[13px] leading-6 text-muted-foreground/68">
+          <p className="mt-1.5 text-[13px] leading-6 text-ink-1">
             {personalContribution(project)}
           </p>
         </div>

@@ -25,6 +25,7 @@ export const CONTACT_FIELDS = [
     label: "Name",
     icon: User,
     autoComplete: "name",
+    placeholder: "Ada Lovelace",
   },
   {
     name: "phone",
@@ -33,6 +34,7 @@ export const CONTACT_FIELDS = [
     icon: Phone,
     type: "tel",
     autoComplete: "tel",
+    placeholder: "+995 555 000 000",
   },
   {
     name: "email",
@@ -41,6 +43,7 @@ export const CONTACT_FIELDS = [
     icon: Mail,
     type: "email",
     autoComplete: "email",
+    placeholder: "you@company.com",
   },
   {
     name: "comment",
@@ -48,5 +51,6 @@ export const CONTACT_FIELDS = [
     label: "Comment",
     icon: MessageSquare,
     multiline: true,
+    placeholder: "What are you building, and where could I help?",
   },
 ];

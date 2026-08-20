@@ -10,13 +10,25 @@ export default function TopControls() {
   const menuRef = useRef(null);
   const { loggedIn, isAdmin, logout } = useAuth();
 
+  // Only listen while the menu is actually open — this used to run on every
+  // click anywhere in the app for the entire session.
   useEffect(() => {
-    const close = (event) => {
+    if (!menuOpen) return;
+
+    const onClick = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) setMenuOpen(false);
     };
-    document.addEventListener("click", close);
-    return () => document.removeEventListener("click", close);
-  }, []);
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [menuOpen]);
 
   const handleLogout = () => {
     setMenuOpen(false);
@@ -36,7 +48,7 @@ export default function TopControls() {
         ) : loggedIn ? (
           <button
             onClick={logout}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/8 bg-white/4 backdrop-blur-md text-xs font-medium text-muted-foreground hover:text-foreground hover:border-white/15 transition-all duration-200"
+            className="flex min-h-11 items-center gap-1.5 rounded-lg border border-white/8 bg-white/4 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-md transition-all duration-200 hover:border-white/15 hover:text-foreground"
           >
             <LogOut className="w-3 h-3" />
             Log out
@@ -44,7 +56,7 @@ export default function TopControls() {
         ) : (
           <Link
             to={ROUTES.LOGIN}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/8 bg-white/4 backdrop-blur-md text-xs font-medium text-muted-foreground hover:text-foreground hover:border-white/15 transition-all duration-200"
+            className="flex min-h-11 items-center gap-1.5 rounded-lg border border-white/8 bg-white/4 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-md transition-all duration-200 hover:border-white/15 hover:text-foreground"
           >
             <LogIn className="w-3 h-3" />
             Log in

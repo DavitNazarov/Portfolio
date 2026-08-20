@@ -1,10 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ArrowLeft, KeyRound, Loader2, Lock, Mail } from "lucide-react";
 import { api } from "@/lib/api";
 import { API_ROUTES, ROUTES } from "@/constants/routes";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
-import { LogIn as LogInIcon, ArrowLeft, Loader2 } from "lucide-react";
+import SpotlightCard from "@/components/ui/SpotlightCard";
+
+const TINT = "167, 139, 250";
+const EASE = [0.16, 1, 0.3, 1];
+
+const fieldClass = cn(
+  "w-full rounded-xl border bg-background/70 py-3 pl-11 pr-4 text-sm text-foreground",
+  "placeholder:text-ink-3 outline-none transition-all",
+  "border-white/10 focus:border-transparent focus:ring-2 focus:ring-white/20"
+);
 
 export default function LogIn() {
   const [email, setEmail] = useState("");
@@ -13,8 +24,8 @@ export default function LogIn() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
     setError("");
     setLoading(true);
     try {
@@ -31,91 +42,133 @@ export default function LogIn() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 relative overflow-hidden">
-      {/* Ambient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,var(--muted)_0%,transparent_50%)]" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-muted/20 blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-muted/10 blur-3xl" />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 50% 40%, oklch(0.3 0 0 / 0.35) 0%, transparent 70%)",
+        }}
+      />
 
-      <div className="relative w-full max-w-[400px]">
-        <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-xl shadow-xl shadow-black/5 dark:shadow-black/20 p-8 space-y-8">
-          <div className="space-y-2 text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-foreground/10 text-foreground mb-2">
-              <LogInIcon className="w-7 h-7" />
-            </div>
-            <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-            <p className="text-sm text-muted-foreground">Sign in to access your dashboard</p>
-          </div>
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE }}
+        className="relative z-10 w-full max-w-[26rem]"
+      >
+        <div className="mb-7 flex items-center gap-3">
+          <motion.span
+            className="h-px w-10"
+            style={{ backgroundColor: `rgba(${TINT}, 0.55)` }}
+            initial={{ scaleX: 0, originX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
+          />
+          <span
+            className="text-[10px] font-mono uppercase tracking-[0.34em]"
+            style={{ color: `rgba(${TINT}, 0.85)` }}
+          >
+            Admin · Access
+          </span>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <label className="block space-y-1.5">
-              <span className="text-sm font-medium text-foreground">Email</span>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={cn(
-                  "w-full px-4 py-3 rounded-xl border border-border bg-background/50",
-                  "placeholder:text-muted-foreground placeholder:opacity-70",
-                  "focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent",
-                  "transition-shadow duration-200"
-                )}
-              />
+        <h1
+          className="mb-2 font-extralight leading-[1.05] tracking-tight text-foreground"
+          style={{ fontSize: "clamp(2rem, 6vw, 2.75rem)" }}
+        >
+          Welcome{" "}
+          <span className="font-serif font-normal italic text-white/95">back</span>.
+        </h1>
+        <p className="mb-8 text-sm leading-6 text-ink-1">
+          Sign in to manage the content behind this site.
+        </p>
+
+        <SpotlightCard tint={TINT} className="p-5 sm:p-6" hover={false}>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <label htmlFor="login-email" className="block space-y-1.5">
+              <span className="text-xs font-medium uppercase tracking-wider text-ink-1">Email</span>
+              <span className="relative block">
+                <Mail
+                  aria-hidden
+                  className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-ink-2"
+                />
+                <input
+                  id="login-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                  autoComplete="email"
+                  className={fieldClass}
+                />
+              </span>
             </label>
-            <label className="block space-y-1.5">
-              <span className="text-sm font-medium text-foreground">Password</span>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className={cn(
-                  "w-full px-4 py-3 rounded-xl border border-border bg-background/50",
-                  "placeholder:text-muted-foreground placeholder:opacity-70",
-                  "focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent",
-                  "transition-shadow duration-200"
-                )}
-              />
+
+            <label htmlFor="login-password" className="block space-y-1.5">
+              <span className="text-xs font-medium uppercase tracking-wider text-ink-1">
+                Password
+              </span>
+              <span className="relative block">
+                <Lock
+                  aria-hidden
+                  className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-ink-2"
+                />
+                <input
+                  id="login-password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className={fieldClass}
+                />
+              </span>
             </label>
+
             {error && (
-              <div className="rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-2.5">
-                <p className="text-sm text-destructive">{error}</p>
+              <div
+                role="alert"
+                className="rounded-xl border border-destructive/40 bg-destructive/10 px-3.5 py-3 text-sm text-destructive-foreground"
+              >
+                {error}
               </div>
             )}
-            <button
+
+            <motion.button
               type="submit"
               disabled={loading}
+              whileHover={loading ? undefined : { scale: 1.01, y: -1 }}
+              whileTap={loading ? undefined : { scale: 0.98 }}
               className={cn(
-                "w-full py-3.5 rounded-xl bg-foreground text-background font-medium",
-                "hover:opacity-95 active:scale-[0.99] disabled:opacity-60 disabled:pointer-events-none",
-                "transition-all duration-200 flex items-center justify-center gap-2"
+                "inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-3",
+                "bg-foreground text-sm font-medium text-background transition-all",
+                "hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-55"
               )}
             >
               {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Signing in…
-                </>
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               ) : (
-                "Sign in"
+                <KeyRound className="h-4 w-4" aria-hidden />
               )}
-            </button>
+              {loading ? "Signing in…" : "Sign in"}
+            </motion.button>
           </form>
+        </SpotlightCard>
 
-          <p className="text-center">
-            <Link
-              to={ROUTES.HOME}
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to home
-            </Link>
-          </p>
-        </div>
-      </div>
+        <p className="mt-6 text-center">
+          <Link
+            to={ROUTES.HOME}
+            className="inline-flex min-h-11 items-center gap-2 text-[12px] font-mono uppercase tracking-[0.22em] text-ink-2 transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+            Back to site
+          </Link>
+        </p>
+      </motion.div>
     </div>
   );
 }
